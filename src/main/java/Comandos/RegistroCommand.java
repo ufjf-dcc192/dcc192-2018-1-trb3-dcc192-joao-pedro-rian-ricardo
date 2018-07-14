@@ -12,12 +12,16 @@ public class RegistroCommand implements Comando{
 
     @Override
     public void exec(HttpServletRequest request, HttpServletResponse response) {
-        try {
+       
             RequestDispatcher despachante = request.getRequestDispatcher("/WEB-INF/registro.jsp");
+        try {
             despachante.forward(request, response);
-        } catch (ServletException | IOException ex) {
+        } catch (ServletException ex) {
+            Logger.getLogger(RegistroCommand.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
             Logger.getLogger(RegistroCommand.class.getName()).log(Level.SEVERE, null, ex);
         }
+       
     }
     
 }
