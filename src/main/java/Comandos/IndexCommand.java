@@ -15,9 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 public class IndexCommand implements Comando {
 
     @Override
-    public void exec(HttpServletRequest request, HttpServletResponse response) {
-        
-        List<Evento> eventos;
+    public void exec(HttpServletRequest request, HttpServletResponse response) {   
+     
         try {
             Integer idParticipante;
             if(request.getAttribute("usuario")!=null){
@@ -25,16 +24,17 @@ public class IndexCommand implements Comando {
             } else{
                 idParticipante = Integer.parseInt(request.getParameter("usuario"));
             }
-            eventos = eventodao.listByIDParticipante(idParticipante);
-            Gson gson = new Gson();
-            String eventosJson = gson.toJson(eventos);
-            request.setAttribute("eventos", eventosJson);
+            
+            
             request.setAttribute("usuario", idParticipante);
             RequestDispatcher despachante = request.getRequestDispatcher("/WEB-INF/index.jsp");
             despachante.forward(request, response);
-        } catch (SQLException | ServletException | IOException ex) {
+        } catch (ServletException ex) {
+            Logger.getLogger(IndexCommand.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
             Logger.getLogger(IndexCommand.class.getName()).log(Level.SEVERE, null, ex);
         }
+       
     }
 
 }

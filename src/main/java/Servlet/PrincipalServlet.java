@@ -23,7 +23,7 @@ public class PrincipalServlet extends HttpServlet {
         try {
             Map<String, String> rotas;
             rotas = new HashMap<String, String>();
-            rotas.put("/index.html", "Comandos.LoginCommand");
+            rotas.put("/login.html", "Comandos.LoginCommand");
             rotas.put("/inicial.html", "Comandos.IndexCommand");
             rotas.put("/registro.html", "Comandos.RegistroCommand");
 
@@ -50,9 +50,9 @@ public class PrincipalServlet extends HttpServlet {
         try {
             Map<String, String> rotas;
             rotas = new HashMap<String, String>();
-            rotas.put("/index.html", "Comandos.LoginPostCommand");
-            rotas.put("/inscricao.html", "Comandos.InscricaoPostCommand");
-            rotas.put("/registro.html", "Comandos.RegistroPostCommand");
+            rotas.put("/login.html", "Comandos.LoginCommand");
+            rotas.put("/inicial.html", "Comandos.IndexCommand");
+            rotas.put("/registro.html", "Comandos.RegistroCommand");
             
             String clazzName = rotas.get(request.getServletPath());
             
