@@ -1,15 +1,27 @@
 package Models;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.util.List;
 
 
 public class Comentario {
     private Integer id;
     private String comentario;
-    private Date dataCriacao;
-    private Date dataAtualizacao;
+    private LocalDateTime dataCriacao;
+    private LocalDateTime dataAtualizacao;
     private Usuario usuario;
     private Item item;
+    private List<AvaliacaoComentario> avaliacoes;
+
+    public List<AvaliacaoComentario> getAvaliacoes() {
+        return avaliacoes;
+    }
+
+    public void setAvaliacoes(List<AvaliacaoComentario> avaliacoes) {
+        this.avaliacoes = avaliacoes;
+    }
+    
+    
 
     public Comentario() {
     }
@@ -30,19 +42,19 @@ public class Comentario {
         this.comentario = comentario;
     }
 
-    public Date getDataCriacao() {
+    public LocalDateTime getDataCriacao() {
         return dataCriacao;
     }
 
-    public void setDataCriacao(Date dataCriacao) {
+    public void setDataCriacao(LocalDateTime dataCriacao) {
         this.dataCriacao = dataCriacao;
     }
 
-    public Date getDataAtualizacao() {
+    public LocalDateTime getDataAtualizacao() {
         return dataAtualizacao;
     }
 
-    public void setDataAtualizacao(Date dataAtualizacao) {
+    public void setDataAtualizacao(LocalDateTime dataAtualizacao) {
         this.dataAtualizacao = dataAtualizacao;
     }
 
