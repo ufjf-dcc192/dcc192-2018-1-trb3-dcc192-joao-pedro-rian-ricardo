@@ -1,5 +1,7 @@
 package Comandos;
 
+import DAOs.UsuarioDAO;
+import Models.Usuario;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -17,9 +19,12 @@ public class IndexCommand implements Comando {
     public void exec(HttpServletRequest request, HttpServletResponse response) {
         response.setContentType("text/html;charset=UTF-8");
         Integer idUsuario = (Integer) request.getSession().getAttribute("usuario");
+        UsuarioDAO dao = UsuarioDAO.getInstance();
+        Usuario usuario = dao.getUsuarioById(idUsuario);
         try {
             if (idUsuario != null) {
-                RequestDispatcher despachante = request.getRequestDispatcher("/WEB-INF/index.jsp");
+                request.setAttribute("usuario", usuario);
+                RequestDispatcher despachante = request.getRequestDispatcher("/WEB-INF/inicial.jsp");
                 despachante.forward(request, response);
             } else {
                 response.sendRedirect("login.html");

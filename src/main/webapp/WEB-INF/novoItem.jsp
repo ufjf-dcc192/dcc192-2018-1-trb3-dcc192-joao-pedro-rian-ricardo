@@ -1,45 +1,31 @@
-<%-- 
-    Document   : novoEvento
-    Created on : 04/06/2018, 15:46:20
-    Author     : Rian Alves
---%>
 
 <%@include file="jspf/cabecalho.jspf" %>
-        <title>Crie um novo item</title>
-    </head>
-    <body>
+<title>Crie um novo item</title>
+</head>
+<body>
     <br/>
-    <center><h3>Insira abaixo os dados solicitados para a criação de um novo Evento</h3></center>
-        <div class="row">
-            <div class="col"></div>
-            <div class="col"><br/>
-               
-                <form method="post">
-                    <div class="form-group">
-                    <label>Título do Evento:</label>
-                        <input class="form-control" type="text" placeholder="Insira aqui o nome do item" name="titulo"/><br/>
-                    </div>
-                    <div class="form-group">
-                    <label>Valor Mínimo do Presente: </label>    
-                        <input class="form-control" type="text" placeholder="Insira aqui o valor do item" name="minimo"/><br/>
-                    </div>
-                    <div class="form-group">
-                        <label>Data do Sorteio:</label>    
-                        <input class="form-control" type="date" name="sorteio"/><br/>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Data do Evento:</label>    
-                                    <input class="form-control" type="date" name="evento"/><br/>
-                    </div>
-                    
-                    <input type="hidden" value="${usuario}" name="usuario">
-                    <input type="submit" class="btn btn-success"/>
-                    <input type="reset" class="btn btn-danger"/>
-                </form>
-            </div>
-            <div class="col"></div>
-        </div>
+<center><h3>Insira abaixo os dados solicitados para a criação de um novo Item</h3></center>
+
+
+<form method="post">
+    <div class="form-group">
+        <label>Título do Item:</label>
+        <input class="form-control" type="text" placeholder="Insira aqui o título do item a ser discutido" name="titulo"/><br/>
+
+        <label>Descrição do Item:</label>
+        <input class="form-control" type="text" placeholder="Insira aqui uma pequena descrição sobre o item a ser discutido" name="descricao"/><br/>
+
+
+
+
+        <input type="hidden" value="${usuario}" name="usuario">
+        <input type="submit" class="btn btn-success"/>
+        <input type="reset" class="btn btn-danger"/>
+    </div>
+</form>
+
+<div class="col"></div>
+
 
 
 <br/>
