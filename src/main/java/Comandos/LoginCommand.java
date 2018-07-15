@@ -19,9 +19,7 @@ public class LoginCommand implements Comando {
             RequestDispatcher despachante = request.getRequestDispatcher("/WEB-INF/login.jsp");
             despachante.forward(request, response);
                   
-        } catch (ServletException ex) {
-            Logger.getLogger(LoginCommand.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
+        } catch (ServletException | IOException ex) {
             Logger.getLogger(LoginCommand.class.getName()).log(Level.SEVERE, null, ex);
         }
        
