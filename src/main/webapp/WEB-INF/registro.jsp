@@ -1,39 +1,39 @@
-<%-- 
-    Document   : inscricao
-    Created on : 01/07/2018, 10:57:29
-    Author     : Rian Alves
---%>
+<%@include file="/WEB-INF/jspf/bootstrap.jspf" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<%@include file="jspf/cabecalho.jspf" %>
-<title>CriaÁ„o de um Usu·rio</title>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Cria√ß√£o de um Usu√°rio</title>
     </head>
     <body>
-    <center><h3>Cadastre abaixo o seu usu·rio, preencha todos os dados</h3></center>
-        <div class="row">
-            <div class="col"></div>
-            <div class="col"><br/>
-               
-                <form method="post">
-                    <div class="form-group">
+    <center><h3>Cadastre abaixo o seu usu√°rio, preencha todos os dados</h3></center>
+    <div class="row">
+        <div class="col"></div>
+        <div class="col"><br/>
+
+            <form method="post">
+                <div class="form-group">
                     <label>Nome Completo:</label>
-                        <input class="form-control" type="text" placeholder="Insira aqui o seu nome completo" name="nome"/><br/>
-                    </div>
-                    <div class="form-group">
+                    <input class="form-control" type="text" placeholder="Insira aqui o seu nome completo" name="nome"/><br/>
+                </div>
+                <div class="form-group">
                     <label>E-mail:</label>    
-                        <input class="form-control" type="text" placeholder="Insira aqui o seu e-mail" name="email"/><br/>
-                    </div>
-                     <div class="form-group">
+                    <input class="form-control" type="text" placeholder="Insira aqui o seu e-mail" name="email"/><br/>
+                </div>
+                <div class="form-group">
                     <label>Login:</label>    
-                        <input class="form-control" type="text" placeholder="Insira aqui o seu login" name="email"/><br/>
-                    </div>
-                    <div class="form-group">
-                        <label>Senha:</label>    
-                        <input class="form-control" type="password" placeholder="Insira aqui a sua senha" name="senha"/><br/>
-                    </div>
-                    <input type="submit" class="btn btn-success"/>
-                    <input type="reset" class="btn btn-danger"/>
-                </form>
-            </div>
-            <div class="col"></div>
+                    <input class="form-control" type="text" placeholder="Insira aqui o seu login" name="email"/><br/>
+                </div>
+                <div class="form-group">
+                    <label>Senha:</label>    
+                    <input class="form-control" type="password" placeholder="Insira aqui a sua senha" name="senha"/><br/>
+                </div>
+                <input type="submit" class="btn btn-success"/>
+                <input type="reset" class="btn btn-danger"/>
+            </form>
         </div>
-<%@include file="jspf/rodape.jspf" %>
+        <div class="col"></div>
+    </div>
+    <%@include file="jspf/rodape.jspf" %>
