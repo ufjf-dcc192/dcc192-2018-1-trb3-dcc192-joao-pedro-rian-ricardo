@@ -28,6 +28,11 @@
             <artifactId>tomcat-jasper-el</artifactId>
             <version>${tomcat.version}</version>
         </dependency>
+        <dependency>	
+            <groupId>javax.servlet</groupId>	
+            <artifactId>jstl</artifactId>	
+            <version>1.2</version>	
+        </dependency>
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-jsp-api</artifactId>
