@@ -61,5 +61,16 @@ public class UsuarioDAO {
         }
         return usuario;
     }
+    
+     public Usuario listbyID(Integer id) throws SQLException {
+        Usuario usuario;
+        try (PreparedStatement consulta = conexao.prepareStatement("Select * from usuario where id = ?")) {
+            consulta.setInt(1, id);
+            ResultSet resultado = consulta.executeQuery();
+            resultado.next();
+            usuario = new Usuario(resultado.getInt("id"), resultado.getString("nome"), resultado.getString("email"),resultado.getString("login"));
+        }
+        return usuario;
+    }
 
 }
