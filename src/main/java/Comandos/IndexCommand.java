@@ -19,7 +19,7 @@ public class IndexCommand implements Comando {
         Integer idUsuario = (Integer) request.getSession().getAttribute("usuario");
         try {
             if (idUsuario != null) {
-                RequestDispatcher despachante = request.getRequestDispatcher("/WEB-INF/index.jsp");
+                RequestDispatcher despachante = request.getRequestDispatcher("/WEB-INF/inicial.jsp");
                 despachante.forward(request, response);
             } else {
                 response.sendRedirect("login.html");
