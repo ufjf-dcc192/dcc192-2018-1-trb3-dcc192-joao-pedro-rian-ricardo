@@ -10,6 +10,15 @@ public class AvaliacaoItem {
     public AvaliacaoItem() {
     }
 
+    public AvaliacaoItem(Integer id, Integer positiva, Integer negativa, Usuario usuario, Item item) {
+        this.id = id;
+        this.positiva = positiva;
+        this.negativa = negativa;
+        this.usuario = usuario;
+        this.item = item;
+    }
+    
+    
     public Integer getId() {
         return id;
     }

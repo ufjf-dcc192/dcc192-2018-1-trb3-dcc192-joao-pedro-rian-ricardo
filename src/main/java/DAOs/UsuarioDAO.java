@@ -8,10 +8,6 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author Rian Alves
- */
 public class UsuarioDAO {
 
     private static Connection conexao;
@@ -51,6 +47,22 @@ public class UsuarioDAO {
         try (PreparedStatement comando = conexao.prepareStatement(sql)) {
             comando.setString(1, login);
             comando.setString(2, senha);
+            ResultSet resultado = comando.executeQuery();
+            if (resultado.next()) {
+                usuario = new Usuario(resultado.getInt("id"), resultado.getString("nome"), resultado.getString("email"), resultado.getString("login"));
+            }
+            comando.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return usuario;
+    }
+    
+        public Usuario getUsuarioById(Integer id) {
+        String sql = "SELECT * FROM USUARIO WHERE LOGIN = ? AND SENHA = MD5(?)";
+        Usuario usuario = null;
+        try (PreparedStatement comando = conexao.prepareStatement(sql)) {
+            comando.setInt(1, id);
             ResultSet resultado = comando.executeQuery();
             if (resultado.next()) {
                 usuario = new Usuario(resultado.getInt("id"), resultado.getString("nome"), resultado.getString("email"), resultado.getString("login"));
