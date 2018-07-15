@@ -43,7 +43,7 @@ public class PrincipalServlet extends HttpServlet {
 
         try {
             Map<String, String> rotas;
-            rotas = new HashMap<String, String>();
+            rotas = new HashMap<>();
             rotas.put("/index.html", "Comandos.LoginPostCommand");
             rotas.put("/inicial.html", "Comandos.IndexCommand");
             rotas.put("/registro.html", "Comandos.RegistroCommand");

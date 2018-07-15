@@ -46,18 +46,20 @@ public class UsuarioDAO {
     }
 
     public Usuario getUsuario(String login, String senha) {
-        String sql = "SELECT ID FROM USUARIO WHERE LOGIN = ? AND SENHA = MD5(?)";
+        String sql = "SELECT * FROM USUARIO WHERE LOGIN = ? AND SENHA = MD5(?)";
         Usuario usuario = null;
         try (PreparedStatement comando = conexao.prepareStatement(sql)) {
             comando.setString(1, login);
             comando.setString(2, senha);
             ResultSet resultado = comando.executeQuery();
-            usuario = new Usuario(resultado.getInt("id"), resultado.getString("nome"), resultado.getString("email"), resultado.getString("login"));
+            if (resultado.next()) {
+                usuario = new Usuario(resultado.getInt("id"), resultado.getString("nome"), resultado.getString("email"), resultado.getString("login"));
+            }
             comando.close();
         } catch (SQLException ex) {
             Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return usuario;
     }
-    
+
 }
