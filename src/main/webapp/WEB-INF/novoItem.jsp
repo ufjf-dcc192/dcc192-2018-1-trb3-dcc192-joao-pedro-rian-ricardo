@@ -5,7 +5,7 @@
 --%>
 
 <%@include file="jspf/cabecalho.jspf" %>
-        <title>Crie um novo Evento e divirta-se!</title>
+        <title>Crie um novo item</title>
     </head>
     <body>
     <br/>
@@ -17,11 +17,11 @@
                 <form method="post">
                     <div class="form-group">
                     <label>Título do Evento:</label>
-                        <input class="form-control" type="text" placeholder="Insira aqui um Título para seu Evento" name="titulo"/><br/>
+                        <input class="form-control" type="text" placeholder="Insira aqui o nome do item" name="titulo"/><br/>
                     </div>
                     <div class="form-group">
                     <label>Valor Mínimo do Presente: </label>    
-                        <input class="form-control" type="text" placeholder="Insira aqui o valor Mínimo do presente" name="minimo"/><br/>
+                        <input class="form-control" type="text" placeholder="Insira aqui o valor do item" name="minimo"/><br/>
                     </div>
                     <div class="form-group">
                         <label>Data do Sorteio:</label>    
