@@ -2,9 +2,7 @@ package Servlet;
 
 import Comandos.Comando;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,7 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet(name = "PrincipalServlet", urlPatterns = {"/index.html", "/login.html", "/registro.html"})
+@WebServlet(name = "PrincipalServlet", urlPatterns = {"/inicial.html", "/index.html", "/registro.html"})
 public class PrincipalServlet extends HttpServlet {
 
     @Override
@@ -23,7 +21,7 @@ public class PrincipalServlet extends HttpServlet {
         try {
             Map<String, String> rotas;
             rotas = new HashMap<String, String>();
-            rotas.put("/login.html", "Comandos.LoginCommand");
+            rotas.put("/index.html", "Comandos.LoginCommand");
             rotas.put("/inicial.html", "Comandos.IndexCommand");
             rotas.put("/registro.html", "Comandos.RegistroCommand");
 
@@ -34,11 +32,7 @@ public class PrincipalServlet extends HttpServlet {
             comando = (Comando) Class.forName(clazzName).newInstance();
 
             comando.exec(request, response);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(PrincipalServlet.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            Logger.getLogger(PrincipalServlet.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
             Logger.getLogger(PrincipalServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -50,7 +44,7 @@ public class PrincipalServlet extends HttpServlet {
         try {
             Map<String, String> rotas;
             rotas = new HashMap<String, String>();
-            rotas.put("/login.html", "Comandos.LoginCommand");
+            rotas.put("/index.html", "Comandos.LoginCommand");
             rotas.put("/inicial.html", "Comandos.IndexCommand");
             rotas.put("/registro.html", "Comandos.RegistroCommand");
             
@@ -61,11 +55,7 @@ public class PrincipalServlet extends HttpServlet {
             comando = (Comando) Class.forName(clazzName).newInstance();
             
             comando.exec(request, response);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(PrincipalServlet.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            Logger.getLogger(PrincipalServlet.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
             Logger.getLogger(PrincipalServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
 
