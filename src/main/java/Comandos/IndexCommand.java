@@ -1,6 +1,5 @@
 package Comandos;
 
-
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -15,26 +14,20 @@ import javax.servlet.http.HttpServletResponse;
 public class IndexCommand implements Comando {
 
     @Override
-    public void exec(HttpServletRequest request, HttpServletResponse response) {   
-     
+    public void exec(HttpServletRequest request, HttpServletResponse response) {
+        response.setContentType("text/html;charset=UTF-8");
+        Integer idUsuario = (Integer) request.getSession().getAttribute("usuario");
         try {
-            Integer idParticipante;
-            if(request.getAttribute("usuario")!=null){
-                idParticipante = (Integer)request.getAttribute("usuario");
-            } else{
-                idParticipante = Integer.parseInt(request.getParameter("usuario"));
+            if (idUsuario != null) {
+                RequestDispatcher despachante = request.getRequestDispatcher("/WEB-INF/index.jsp");
+                despachante.forward(request, response);
+            } else {
+                response.sendRedirect("login.html");
             }
-            
-            
-            request.setAttribute("usuario", idParticipante);
-            RequestDispatcher despachante = request.getRequestDispatcher("/WEB-INF/index.jsp");
-            despachante.forward(request, response);
-        } catch (ServletException ex) {
-            Logger.getLogger(IndexCommand.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
+        } catch (ServletException | IOException ex) {
             Logger.getLogger(IndexCommand.class.getName()).log(Level.SEVERE, null, ex);
         }
-       
+
     }
 
 }
