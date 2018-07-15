@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @WebServlet(name = "PrincipalServlet", urlPatterns = {"/inicial.html", "/index.html", "/registro.html","/logout.html"})
-public class PrincipalServlet extends HttpServlet {
+public class ItemServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -38,7 +38,7 @@ public class PrincipalServlet extends HttpServlet {
 
             comando.exec(request, response);
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
-            Logger.getLogger(PrincipalServlet.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ItemServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
@@ -61,7 +61,7 @@ public class PrincipalServlet extends HttpServlet {
             
             comando.exec(request, response);
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
-            Logger.getLogger(PrincipalServlet.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ItemServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
