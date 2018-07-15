@@ -2,9 +2,7 @@ package Servlet;
 
 import Comandos.Comando;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,11 +32,7 @@ public class PrincipalServlet extends HttpServlet {
             comando = (Comando) Class.forName(clazzName).newInstance();
 
             comando.exec(request, response);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(PrincipalServlet.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            Logger.getLogger(PrincipalServlet.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
             Logger.getLogger(PrincipalServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -61,11 +55,7 @@ public class PrincipalServlet extends HttpServlet {
             comando = (Comando) Class.forName(clazzName).newInstance();
             
             comando.exec(request, response);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(PrincipalServlet.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            Logger.getLogger(PrincipalServlet.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
             Logger.getLogger(PrincipalServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
 
