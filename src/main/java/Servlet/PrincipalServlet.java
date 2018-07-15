@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet(name = "PrincipalServlet", urlPatterns = {"/index.html", "/login.html", "/registro.html"})
+@WebServlet(name = "PrincipalServlet", urlPatterns = {"/inicial.html", "/index.html", "/registro.html"})
 public class PrincipalServlet extends HttpServlet {
 
     @Override
@@ -21,8 +21,8 @@ public class PrincipalServlet extends HttpServlet {
         try {
             Map<String, String> rotas;
             rotas = new HashMap<String, String>();
-            rotas.put("/login.html", "Comandos.LoginCommand");
-            rotas.put("/index.html", "Comandos.IndexCommand");
+            rotas.put("/index.html", "Comandos.LoginCommand");
+            rotas.put("/inicial.html", "Comandos.IndexCommand");
             rotas.put("/registro.html", "Comandos.RegistroCommand");
 
             String clazzName = rotas.get(request.getServletPath());
@@ -44,8 +44,8 @@ public class PrincipalServlet extends HttpServlet {
         try {
             Map<String, String> rotas;
             rotas = new HashMap<String, String>();
-            rotas.put("/login.html", "Comandos.LoginCommand");
-            rotas.put("/index.html", "Comandos.IndexCommand");
+            rotas.put("/index.html", "Comandos.LoginCommand");
+            rotas.put("/inicial.html", "Comandos.IndexCommand");
             rotas.put("/registro.html", "Comandos.RegistroCommand");
             
             String clazzName = rotas.get(request.getServletPath());
