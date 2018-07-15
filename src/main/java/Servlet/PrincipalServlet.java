@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet(name = "PrincipalServlet", urlPatterns = {"/inicial.html", "/index.html", "/registro.html","/logout.html"})
+@WebServlet(name = "PrincipalServlet", urlPatterns = {"/inicial.html","/item-novo.html", "/index.html", "/registro.html","/logout.html"})
 public class PrincipalServlet extends HttpServlet {
 
     @Override

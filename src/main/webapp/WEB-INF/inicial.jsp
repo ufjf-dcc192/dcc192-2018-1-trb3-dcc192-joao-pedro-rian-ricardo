@@ -15,7 +15,7 @@
 
             </div>
             <div class="col col-lg-6">
-                <a href=""><button type="button" class="btn btn-primary">Criar Item de Discussão</button></a>
+                <a href="item-novo.html"><button type="button" class="btn btn-primary">Criar Item de Discussão</button></a>
                 <br/>
                 <br/>
 
