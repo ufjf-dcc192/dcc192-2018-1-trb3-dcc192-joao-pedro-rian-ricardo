@@ -17,6 +17,13 @@ private String senha;
         this.login = login;
         this.senha = senha;
     }
+    
+    public Usuario(Integer id, String nome, String email, String login){
+        this.id=id;
+        this.nome=nome;
+        this.email = email;
+        this.login = login;
+    }
 
     public Integer getId() {
         return id;
