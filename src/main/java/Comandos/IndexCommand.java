@@ -17,26 +17,19 @@ public class IndexCommand implements Comando {
 
     @Override
     public void exec(HttpServletRequest request, HttpServletResponse response) {
+        response.setContentType("text/html;charset=UTF-8");
+        Integer idUsuario = (Integer) request.getSession().getAttribute("usuario");
+        UsuarioDAO dao = UsuarioDAO.getInstance();
+        Usuario usuario = dao.getUsuarioById(idUsuario);
         try {
-            response.setContentType("text/html;charset=UTF-8");
-            Integer idUsuario = (Integer) request.getSession().getAttribute("usuario");
-            UsuarioDAO dao = UsuarioDAO.getInstance();
-            Usuario usuario = dao.listbyID(idUsuario);
-            
-            
-            try {
-                if (idUsuario != null) {
-                    request.setAttribute("usuario", usuario);
-                    RequestDispatcher despachante = request.getRequestDispatcher("/WEB-INF/inicial.jsp");
-                    despachante.forward(request, response);
-                } else {
-                    response.sendRedirect("login.html");
-                }
-            } catch (ServletException | IOException ex) {
-                Logger.getLogger(IndexCommand.class.getName()).log(Level.SEVERE, null, ex);
+            if (idUsuario != null) {
+                request.setAttribute("usuario", usuario);
+                RequestDispatcher despachante = request.getRequestDispatcher("/WEB-INF/inicial.jsp");
+                despachante.forward(request, response);
+            } else {
+                response.sendRedirect("login.html");
             }
-
-        } catch (SQLException ex) {
+        } catch (ServletException | IOException ex) {
             Logger.getLogger(IndexCommand.class.getName()).log(Level.SEVERE, null, ex);
         }
 

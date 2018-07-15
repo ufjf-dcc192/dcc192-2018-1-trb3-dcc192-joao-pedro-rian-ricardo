@@ -12,7 +12,16 @@ public class Item {
     private Usuario usuario;
     private List<Comentario> comentarios;
     private List<Link> links;
+    private List<AvaliacaoItem> avaliacoes;
 
+    public List<AvaliacaoItem> getAvaliacoes() {
+        return avaliacoes;
+    }
+
+    public void setAvaliacoes(List<AvaliacaoItem> avaliacoes) {
+        this.avaliacoes = avaliacoes;
+    }
+    
     public List<Comentario> getComentarios() {
         return comentarios;
     }

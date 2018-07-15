@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet(name = "PrincipalServlet", urlPatterns = {"/inicial.html", "/index.html", "/registro.html","/logout.html"})
+@WebServlet(name = "ItemServlet", urlPatterns = {"/item-listar.html","/item-novo.html","/item-editar.html","/item-excluir.html","/item.html","/a-avaliar.html"})
 public class ItemServlet extends HttpServlet {
 
     @Override
@@ -21,14 +21,12 @@ public class ItemServlet extends HttpServlet {
         try {
             Map<String, String> rotas;
             rotas = new HashMap<>();
-            rotas.put("/index.html", "Comandos.LoginCommand");
-            rotas.put("/inicial.html", "Comandos.IndexCommand");
-            rotas.put("/registro.html", "Comandos.RegistroCommand");
             rotas.put("/item-listar.html", "Comandos.ItensCommand");
             rotas.put("/item-novo.html", "Comandos.ItemNovoCommand");
             rotas.put("/item-editar.html", "Comandos.ItemEditarCommand");
             rotas.put("/item-excluir.html", "Comandos.ItemExcluirCommand");
-            rotas.put("/logout.html", "Comandos.SairCommand");
+            rotas.put("/item.html", "Comandos.ItemDetalhesCommand");
+            rotas.put("/a-avaliar.html", "Comandos.AvaliarCommand");
 
             String clazzName = rotas.get(request.getServletPath());
 
@@ -49,10 +47,8 @@ public class ItemServlet extends HttpServlet {
         try {
             Map<String, String> rotas;
             rotas = new HashMap<>();
-            rotas.put("/index.html", "Comandos.LoginPostCommand");
-            rotas.put("/inicial.html", "Comandos.IndexCommand");
-            rotas.put("/registro.html", "Comandos.RegistroCommand");
-            
+            rotas.put("/item-novo.html", "Comandos.ItemNovoPostCommand");         
+            rotas.put("/item-editar.html", "Comandos.ItemEditarPostCommand");
             String clazzName = rotas.get(request.getServletPath());
             
             Comando comando = null;

@@ -8,6 +8,14 @@ public class Link {
     public Link() {
     }
 
+    public Link(Integer id, String link, Item item) {
+        this.id = id;
+        this.link = link;
+        this.item = item;
+    }
+    
+    
+
     public Integer getId() {
         return id;
     }
