@@ -35,6 +35,26 @@ public class ComentarioDAO {
 
     }
 
+    public Comentario getComentarioById(int id) {
+        String sql = "SELECT * FROM COMENTARIO WHERE ID = ?";
+        Comentario comentario = null;
+        try (PreparedStatement comando = conexao.prepareStatement(sql)) {
+            comando.setInt(1, id);
+            ResultSet resultado = comando.executeQuery();
+            comentario = new Comentario();
+            comentario.setId(resultado.getInt(1));
+            comentario.setItem(ItemDAO.getInstance().getItemById(resultado.getInt(3)));
+            comentario.setUsuario(UsuarioDAO.getInstance().getUsuarioById(resultado.getInt(2)));
+            comentario.setComentario(resultado.getString(4));
+            comentario.setDataCriacao(resultado.getTimestamp(5).toLocalDateTime());
+            comentario.setDataAtualizacao(resultado.getTimestamp(6).toLocalDateTime());
+            comentario.setAvaliacoes(this.getAvaliacoes(comentario));
+        } catch (SQLException ex) {
+            Logger.getLogger(ComentarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return comentario;
+    }
+
     public List<Comentario> getComentariobyItem(Item item) {
         String sql = "SELECT * FROM COMENTARIO WHERE ID_ITEM = ? ORDER BY DATA_CRIACAO";
         List<Comentario> comentarios = new ArrayList<>();
@@ -47,7 +67,7 @@ public class ComentarioDAO {
             comentario.setUsuario(UsuarioDAO.getInstance().getUsuarioById(resultado.getInt(2)));
             comentario.setComentario(resultado.getString(4));
             comentario.setDataCriacao(resultado.getTimestamp(5).toLocalDateTime());
-            comentario.setDataAtualizacao(resultado.getTimestamp(5).toLocalDateTime());
+            comentario.setDataAtualizacao(resultado.getTimestamp(6).toLocalDateTime());
             comentario.setAvaliacoes(this.getAvaliacoes(comentario));
             comentarios.add(comentario);
         } catch (SQLException ex) {
@@ -91,17 +111,18 @@ public class ComentarioDAO {
                 + "  current_timestamp,\n"
                 + "  current_timestamp\n"
                 + ")";
-        try (PreparedStatement comando = conexao.prepareStatement(sql)){
+        try (PreparedStatement comando = conexao.prepareStatement(sql)) {
             comando.setInt(1, comentario.getUsuario().getId());
             comando.setInt(2, comentario.getItem().getId());
             comando.setString(3, comentario.getComentario());
             comando.execute();
             comando.close();
-                    } catch (SQLException ex) {
+        } catch (SQLException ex) {
             Logger.getLogger(ComentarioDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    public List<Comentario> getComentariosByUsuario(int idUsuario){
+
+    public List<Comentario> getComentariosByUsuario(int idUsuario) {
         List<Comentario> comentarios = new ArrayList<>();
         String sql = "SELECT * FROM COMENTARIO INNER JOIN ITEM ON(ITEM.ID = COMENTARIO.ID_ITEM) WHERE ID_USUARIO = ?";
         try (PreparedStatement comando = conexao.prepareStatement(sql)) {
@@ -111,7 +132,7 @@ public class ComentarioDAO {
                 do {
                     Item item = ItemDAO.getInstance().getItemById(resultado.getInt(3));
                     Usuario usuario = UsuarioDAO.getInstance().getUsuarioById(idUsuario);
-                    comentarios.add(new Comentario(resultado.getString(4),usuario, item));
+                    comentarios.add(new Comentario(resultado.getString(4), usuario, item));
                 } while (resultado.next());
             }
         } catch (SQLException ex) {
