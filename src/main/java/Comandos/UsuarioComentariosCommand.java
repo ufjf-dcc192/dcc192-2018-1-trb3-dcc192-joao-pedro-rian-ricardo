@@ -28,8 +28,9 @@ public class UsuarioComentariosCommand implements Comando {
     public void exec(HttpServletRequest request, HttpServletResponse response) {
         try {
             Integer idUsuario = (Integer) request.getSession().getAttribute("usuarioID");
-            UsuarioDAO dao = UsuarioDAO.getInstance();
             List<Comentario> comentarios = ComentarioDAO.getInstance().getComentariosByUsuario(idUsuario);
+            Usuario usuario = UsuarioDAO.getInstance().getUsuarioById(idUsuario);
+            request.setAttribute("usuario", usuario);
             request.setAttribute("comentarios", comentarios);
             
             RequestDispatcher despachante = request.getRequestDispatcher("/WEB-INF/meusComentarios.jsp");
