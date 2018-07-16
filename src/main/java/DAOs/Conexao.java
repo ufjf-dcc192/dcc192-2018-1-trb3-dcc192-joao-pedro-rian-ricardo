@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class Conexao {
 
     public static Connection getConexao() throws SQLException, ClassNotFoundException {
-      boolean online = false;
+      boolean online = true;
       if(online){
           return ConexaoHeroku();
       }
