@@ -30,6 +30,7 @@ public class ComentarCommand implements Comando{
             Integer idItem = Integer.parseInt(request.getParameter("item"));
             request.setAttribute("usuario", idUsuario);
             request.setAttribute("item", idItem);
+            request.setAttribute("enviado", null);
             RequestDispatcher despachante = request.getRequestDispatcher("/WEB-INF/comentar.jsp");
             despachante.forward(request, response);
         } catch (ServletException | IOException ex) {
