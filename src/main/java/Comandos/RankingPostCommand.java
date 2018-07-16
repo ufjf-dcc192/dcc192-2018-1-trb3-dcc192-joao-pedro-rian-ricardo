@@ -15,17 +15,17 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Pedro
  */
-public class RankingCommand implements Comando {
+public class RankingPostCommand implements Comando {
 
     @Override
     public void exec(HttpServletRequest request, HttpServletResponse response) {
         try {
-            List<Item> itens = null;
+            List<Item> itens = ItemDAO.getInstance().getItensOrdenados(Integer.parseInt(request.getParameter("ordenacao")));
             request.setAttribute("itens", itens);
             RequestDispatcher despachante = request.getRequestDispatcher("/WEB-INF/ranking.jsp");
             despachante.forward(request, response);
         } catch (ServletException | IOException ex) {
-            Logger.getLogger(RankingCommand.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RankingPostCommand.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
