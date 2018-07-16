@@ -63,7 +63,7 @@ public class UsuarioDAO {
     }
 
     public Usuario getUsuarioById(Integer id) {
-        String sql = "SELECT * FROM USUARIO WHERE LOGIN = ? AND SENHA = MD5(?)";
+        String sql = "SELECT * FROM USUARIO WHERE ID = ? ";
         Usuario usuario = null;
         try (PreparedStatement comando = conexao.prepareStatement(sql)) {
             comando.setInt(1, id);
@@ -110,7 +110,7 @@ public class UsuarioDAO {
         return false;
     }
 
-    public List<Troll> trolls() {
+    public List<Troll> getTrolls() {
         String sql = "SELECT * FROM TROLLS()";
         List<Troll> trolls = new ArrayList<>();
         try (PreparedStatement comando = conexao.prepareStatement(sql)) {
@@ -122,6 +122,7 @@ public class UsuarioDAO {
                     troll.setTotalAvaliacaoComentario(resultado.getInt(4));
                     troll.setTotalAvaliacaoNegativa(resultado.getInt(5));
                     troll.setIndiceTotal(resultado.getDouble(6));
+                    trolls.add(troll);
                 } while (resultado.next());
             }
         } catch (SQLException ex) {
@@ -130,7 +131,7 @@ public class UsuarioDAO {
         return trolls;
     }
 
-    public List<Curador> curadores() {
+    public List<Curador> getCuradores() {
         String sql = "SELECT * FROM RANKING()";
         List<Curador> curadores = new ArrayList<>();
         try (PreparedStatement comando = conexao.prepareStatement(sql)) {
@@ -142,6 +143,7 @@ public class UsuarioDAO {
                     curador.setTotalPositivas(resultado.getInt(4));
                     curador.setTotalNegativas(resultado.getInt(5));
                     curador.setTotal(resultado.getInt(6));
+                    curadores.add(curador);
                 } while (resultado.next());
             }
         } catch (SQLException ex) {
