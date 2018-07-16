@@ -14,10 +14,11 @@
     <table class="table table-hover">
         <thead>
             <tr class="text-center">
-                <th>Usuário</th>
-                <th>Total de Avaliações de Comentários</th>
-                <th>Total de Avaliações Negativas</th>
-                <th>Índice Percentual</th>
+                <th>Nome do Item</th>
+                <th>Descrição do Item</th>
+                <th>Data de Criação</th>
+                <th>Data de Atualização</th>
+                <th>Criador</th>
                 
             </tr>
         </thead>
@@ -27,12 +28,13 @@
                 <h2 class="text-center text-success">Não há Itens a serem avaliados. Parabéns!</h2>
                 </c:when>
                 <c:otherwise>
-                    <c:forEach var="troll" items="${trolls}">
+                    <c:forEach var="item" items="${itens}">
                         <tr class="text-center">
-                            <td>${troll.usuario.nome}</td> 
-                            <td>${troll.totalAvaliacaoComentario}</td> 
-                            <td class="text-danger">${troll.totalAvaliacaoNegativa}</td> 
-                            <td class="text-danger">${troll.indiceTotal} %</td>                          
+                            <td>${item.titulo}</td> 
+                            <td>${item.descricao}</td> 
+                            <td>${item.getStringDataCriacao()}</td> 
+                            <td>${item.getStringDataAtu()}</td>                          
+                            <td>${item.usuario.nome}</td>
                         </tr>  
                     </c:forEach>
                 </c:otherwise>

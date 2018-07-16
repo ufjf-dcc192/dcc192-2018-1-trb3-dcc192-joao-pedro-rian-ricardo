@@ -1,6 +1,8 @@
 package Models;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.List;
 
 public class Item {
@@ -91,5 +93,11 @@ public class Item {
         this.usuario = usuario;
     }
     
+    public String getStringDataAtu(){
+        return this.dataAtualizacao.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM));
+    }
     
+    public String getStringDataCriacao(){
+        return this.dataCriacao.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM));
+    }
 }

@@ -15,9 +15,9 @@
         <thead>
             <tr class="text-center">
                 <th>Usuário</th>
-                <th>Total de Avaliações de Comentários</th>
+                <th>Total de Avaliações Positivas</th>
                 <th>Total de Avaliações Negativas</th>
-                <th>Índice Percentual</th>
+                <th>Total Geral</th>
                 
             </tr>
         </thead>
@@ -32,7 +32,7 @@
                             <td>${curador.usuario.nome}</td> 
                             <td>${curador.totalPositivas}</td> 
                             <td>${curador.totalNegativas}</td> 
-                            <td>${curador.total} %</td>                          
+                            <td>${curador.total}</td>                          
                         </tr>  
                     </c:forEach>
                 </c:otherwise>

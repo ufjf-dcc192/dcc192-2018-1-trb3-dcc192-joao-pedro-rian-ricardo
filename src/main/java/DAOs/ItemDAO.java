@@ -169,6 +169,7 @@ public class ItemDAO {
         List<Item> itens = new ArrayList<>();
         try (PreparedStatement comando = conexao.prepareStatement(sql)) {
             comando.setInt(1, idUsuario);
+            comando.setInt(2, idUsuario);
             ResultSet resultado = comando.executeQuery();
             if (resultado.next()) {
                 do {
