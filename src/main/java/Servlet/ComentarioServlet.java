@@ -34,7 +34,7 @@ public class ComentarioServlet extends HttpServlet {
             rotas.put("/comentar.html", "Comandos.ComentarCommand");
             rotas.put("/itemComentarios.html", "Comandos.ItemComentariosCommand");
             rotas.put("/meusComentarios.html", "Comandos.UsuarioComentariosCommand");
-            rotas.put("/ranking.html", "Comandos.RankigCommand");
+            rotas.put("/ranking.html", "Comandos.RankingCommand");
 
             String clazzName = rotas.get(request.getServletPath());
 
