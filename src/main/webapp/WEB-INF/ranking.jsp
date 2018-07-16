@@ -8,7 +8,7 @@
 </head>
 <body>
     <c:if test="${empty itens}">
-        <div>
+        <div class="container-fluid">
             <form method="post">
                 <h4>Escolha como deseja ordenar os itens:</h4>
                 <div class="input-group">
@@ -27,7 +27,7 @@
         </div>
     </c:if>
     <c:if test="${!empty itens}">
-        <div>
+        <div  class="container-fluid">
             <form method="post">
                 <h4>Escolha como deseja ordenar os itens:</h4>
                 <div class="input-group">
