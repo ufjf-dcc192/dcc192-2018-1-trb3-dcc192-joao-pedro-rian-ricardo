@@ -17,3 +17,4 @@
         </div>
         <button class="btn btn-primary" type="submit">Enviar</button>
     </form>
+    <%@include file="jspf/rodape.jspf" %>
