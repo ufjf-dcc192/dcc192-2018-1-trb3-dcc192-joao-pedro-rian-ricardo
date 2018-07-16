@@ -31,7 +31,7 @@
             <form method="post">
                 <h4>Escolha como deseja ordenar os itens:</h4>
                 <div class="input-group">
-                    <select class="custom-select" id="inputGroupSelect04">
+                    <select class="custom-select" id="inputGroupSelect04" name="ordenacao">
                         <option selected>Escolha...</option>
                         <option value="2">Data de criação</option>
                         <option value="3">Data de atualização</option>
