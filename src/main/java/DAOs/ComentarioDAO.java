@@ -4,6 +4,7 @@ import Models.AvaliacaoComentario;
 import Models.AvaliacaoItem;
 import Models.Comentario;
 import Models.Item;
+import Models.Usuario;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -99,5 +100,23 @@ public class ComentarioDAO {
                     } catch (SQLException ex) {
             Logger.getLogger(ComentarioDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    public List<Comentario> getComentariosByUsuario(int idUsuario){
+        List<Comentario> comentarios = new ArrayList<>();
+        String sql = "SELECT * FROM COMENTARIO INNER JOIN ITEM ON(ITEM.ID = COMENTARIO.ID_ITEM) WHERE ID_USUARIO = ?";
+        try (PreparedStatement comando = conexao.prepareStatement(sql)) {
+            comando.setInt(1, idUsuario);
+            ResultSet resultado = comando.executeQuery();
+            if (resultado.next()) {
+                do {
+                    Item item = ItemDAO.getInstance().getItemById(resultado.getInt(3));
+                    Usuario usuario = UsuarioDAO.getInstance().getUsuarioById(idUsuario);
+                    comentarios.add(new Comentario(resultado.getString(4),usuario, item));
+                } while (resultado.next());
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ItemDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return comentarios;
     }
 }
