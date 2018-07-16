@@ -46,7 +46,7 @@
         </div>
 
         <table class="table table-striped">
-            <thead>
+            <thead class="text-center">
                 <th>Título</th>
                 <th>Descrição</th>
                 <th>Data de criação</th>
