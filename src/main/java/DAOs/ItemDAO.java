@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -92,13 +93,58 @@ public class ItemDAO {
     }
 
     public void adicionarItem(Item item) {
+        String sql = "INSERT INTO \n"
+                + "  public.item\n"
+                + "(\n"
+                + "  id_usuario,\n"
+                + "  titulo,\n"
+                + "  descricao,\n"
+                + "  data_criacao,\n"
+                + "  data_atualizacao\n"
+                + ")\n"
+                + "VALUES (\n"
+                + "  ?,\n"
+                + "  ?,\n"
+                + "  ?,\n"
+                + "  CURRENT_timestamp,\n"
+                + "  CURRENT_timestamp\n"
+                + ");";
+        Integer idItem = null;
+        try (PreparedStatement comando = conexao.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            comando.setInt(1, item.getUsuario().getId());
+            comando.setString(2, item.getTitulo());
+            comando.setString(3, item.getDescricao());
+            comando.execute();
+            ResultSet rs = comando.getGeneratedKeys();
+            if (rs.next()) {
+                idItem = rs.getInt(1);
+            }
+            comando.close();
+            this.adicionarLinks(idItem, item.getLinks());
+        } catch (SQLException ex) {
+            Logger.getLogger(ItemDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }
 
-    public void adicionarLinks(Item item) {
+    public void adicionarLinks(Integer id, List<Link> links) {
+        if (links.size() > 0) {
+            links.forEach((link) -> {
+                this.adicionarLink(id, link);
+            });
+        }
     }
 
     public void editarItem(Item item) {
+        String sql = "UPDATE \n"
+                + "  item \n"
+                + "SET \n"
+                + "  titulo = ?,\n"
+                + "  descricao = ?,\n"
+                + "  data_atualizacao = current_timestamp\n"
+                + "WHERE \n"
+                + "  id = ?\n"
+                + ";";
     }
 
     public void editarLinks(Item item) {
@@ -126,7 +172,7 @@ public class ItemDAO {
             ResultSet resultado = comando.executeQuery();
             if (resultado.next()) {
                 do {
-                   itens.add(this.getItemById(resultado.getInt(1)));
+                    itens.add(this.getItemById(resultado.getInt(1)));
                 } while (resultado.next());
             }
         } catch (SQLException ex) {
@@ -136,12 +182,24 @@ public class ItemDAO {
 
     }
 
-    public List<Usuario> trolls() {
-        return null;
-    }
 
-    public List<Usuario> curadores() {
-        return null;
+    private void adicionarLink(Integer id, Link link) {
+        String sql = "INSERT INTO \n"
+                + "  link\n"
+                + "(\n"
+                + "  id_item,\n"
+                + "  link\n"
+                + ")\n"
+                + "VALUES (\n"
+                + "  ?,\n"
+                + "  ?\n"
+                + ");";
+        try (PreparedStatement comando = conexao.prepareStatement(sql)) {
+            comando.setInt(1, id);
+            comando.setString(2, link.getLink());
+        } catch (SQLException ex) {
+            Logger.getLogger(ItemDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 }

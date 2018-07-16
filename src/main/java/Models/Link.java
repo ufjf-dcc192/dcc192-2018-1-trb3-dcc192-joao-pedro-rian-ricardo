@@ -13,6 +13,11 @@ public class Link {
         this.link = link;
         this.item = item;
     }
+
+    public Link(Integer id, String link) {
+        this.id = id;
+        this.link = link;
+    }
     
     
 
