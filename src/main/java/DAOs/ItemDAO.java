@@ -229,4 +229,32 @@ public class ItemDAO {
         return itens;
     }
 
+    public List<Item> getItensbyAvaliacao(Integer ordenacao) {
+        String sql = "SELECT ITEM.ID,\n"
+                + "       SUM(AI.POSITIVA) AS TOTALPOSITIVA,\n"
+                + "       SUM(AI.NEGATIVA) AS TOTALNEGATIVA,\n"
+                + "       SUM(AI.POSITIVA - AI.NEGATIVA) AS AVALIACAOFINAL\n"
+                + "FROM ITEM\n"
+                + "     INNER JOIN AVALIACAO_ITEM AI ON (ITEM.ID = AI.ID_ITEM)\n"
+                + "GROUP BY 1 ";
+        List<Item> itens = new ArrayList<>();
+        try (PreparedStatement comando = conexao.prepareStatement(sql)) {
+            comando.setInt(1, ordenacao);
+            ResultSet resultado = comando.executeQuery();
+            if (resultado.next()) {
+                do {
+                    Item item = this.getItemById(resultado.getInt(1));
+                    item.setTotalPositivas(resultado.getInt(2));
+                    item.setTotalNegativas(resultado.getInt(3));
+                    item.setAvaliacaofinal(resultado.getInt(4));
+                    itens.add(item);
+                } while (resultado.next());
+            }
+            comando.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(ItemDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return itens;
+    }
+
 }
