@@ -3,6 +3,7 @@ package Comandos;
 import DAOs.ItemDAO;
 import Models.Item;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,7 +21,7 @@ public class RankingCommand implements Comando {
     @Override
     public void exec(HttpServletRequest request, HttpServletResponse response) {
         try {
-            List<Item> itens = null;
+            List<Item> itens = new ArrayList<>();
             request.setAttribute("itens", itens);
             RequestDispatcher despachante = request.getRequestDispatcher("/WEB-INF/ranking.jsp");
             despachante.forward(request, response);
