@@ -7,7 +7,7 @@
 <title>Ranking</title>
 </head>
 <body>
-    <c:when test="${empty itens}">
+    <c:if test="${empty itens}">
         <div>
             <form method="post">
                 <h4>Escolha como deseja ordenar os itens:</h4>
@@ -25,8 +25,8 @@
                 </div>
             </form>
         </div>
-    </c:when>
-    <c:otherwise>
+    </c:if>
+    <c:if test="${!empty itens}">
         <div>
             <form method="post">
                 <h4>Escolha como deseja ordenar os itens:</h4>
@@ -65,7 +65,7 @@
             </c:forEach>
         </tbody>
     </table>
-</c:otherwise>
+</c:if>
 
 
 </body>
