@@ -27,7 +27,7 @@ public class LoginPostCommand implements Comando {
 
             } else {
                
-                request.getSession().setAttribute("usuario", usuario.getId());
+                request.getSession().setAttribute("usuarioID", usuario.getId());
                 request.getSession().setAttribute("usuarioCompleto", usuario);
                 IndexCommand comando = new IndexCommand();
                 comando.exec(request, response);

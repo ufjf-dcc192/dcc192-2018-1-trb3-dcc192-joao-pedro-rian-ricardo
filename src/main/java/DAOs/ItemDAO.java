@@ -68,7 +68,7 @@ public class ItemDAO {
             ResultSet resultado = comando.executeQuery();
             if (resultado.next()) {
                 do {
-                    links.add(new Link(resultado.getInt(1),resultado.getString(2),item));
+                    links.add(new Link(resultado.getInt(1), resultado.getString(2), item));
                 } while (resultado.next());
             }
         } catch (SQLException ex) {
@@ -76,7 +76,8 @@ public class ItemDAO {
         }
         return links;
     }
-    public List<AvaliacaoItem> getAvaliacoes(Item item){
+
+    public List<AvaliacaoItem> getAvaliacoes(Item item) {
         String sql = "SELECT * FROM avaliacao_item where id_item = ?";
         List<AvaliacaoItem> avaliacoes = new ArrayList<>();
         try (PreparedStatement comando = conexao.prepareStatement(sql)) {
@@ -92,8 +93,8 @@ public class ItemDAO {
         }
         return avaliacoes;
     }
+
     public void adicionarItem(Item item) {
-        
 
     }
 
@@ -113,12 +114,37 @@ public class ItemDAO {
     }
 
     public List<Item> aAvaliar(Integer idUsuario) {
+        String sql = "SELECT id FROM ITEM WHERE ID NOT IN (\n"
+                + "              	SELECT ID_ITEM\n"
+                + "              	FROM COMENTARIO\n"
+                + "              	WHERE ID_USUARIO = ?  	) or\n"
+                + "  	ID not IN (\n"
+                + "           	SELECT ID_ITEM\n"
+                + "  	         FROM AVALIACAO_ITEM\n"
+                + "           	WHERE ID_USUARIO = ?\n"
+                + "  	)";
+        List<Item> itens = new ArrayList<>();
+        try (PreparedStatement comando = conexao.prepareStatement(sql)) {
+            comando.setInt(1, idUsuario);
+            ResultSet resultado = comando.executeQuery();
+            if (resultado.next()) {
+                do {
+                   itens.add(this.getItemById(resultado.getInt(1)));
+                } while (resultado.next());
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ItemDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return itens;
+
     }
 
     public List<Usuario> trolls() {
+        return null;
     }
 
     public List<Usuario> curadores() {
+        return null;
     }
 
 }

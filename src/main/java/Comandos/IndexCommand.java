@@ -18,7 +18,7 @@ public class IndexCommand implements Comando {
     @Override
     public void exec(HttpServletRequest request, HttpServletResponse response) {
         response.setContentType("text/html;charset=UTF-8");
-        Integer idUsuario = (Integer) request.getSession().getAttribute("usuario");
+        Integer idUsuario = (Integer) request.getSession().getAttribute("usuarioID");
         UsuarioDAO dao = UsuarioDAO.getInstance();
         Usuario usuario = dao.getUsuarioById(idUsuario);
         try {

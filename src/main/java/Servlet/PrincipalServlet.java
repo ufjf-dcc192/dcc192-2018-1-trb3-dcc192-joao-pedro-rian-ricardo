@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet(name = "PrincipalServlet", urlPatterns = {"/inicial.html","itemnovo.html", "/index.html", "/registro.html","/logout.html"})
+@WebServlet(name = "PrincipalServlet", urlPatterns = {"/inicial.html", "/index.html", "/registro.html","/logout.html"})
 public class PrincipalServlet extends HttpServlet {
 
     @Override
@@ -24,10 +24,6 @@ public class PrincipalServlet extends HttpServlet {
             rotas.put("/index.html", "Comandos.LoginCommand");
             rotas.put("/inicial.html", "Comandos.IndexCommand");
             rotas.put("/registro.html", "Comandos.RegistroCommand");
-            rotas.put("/item-listar.html", "Comandos.ItensCommand");
-            rotas.put("/itemnovo.html", "Comandos.ItemNovoCommand");
-            rotas.put("/item-editar.html", "Comandos.ItemEditarCommand");
-            rotas.put("/item-excluir.html", "Comandos.ItemExcluirCommand");
             rotas.put("/logout.html", "Comandos.SairCommand");
 
             String clazzName = rotas.get(request.getServletPath());
@@ -52,7 +48,6 @@ public class PrincipalServlet extends HttpServlet {
             rotas.put("/index.html", "Comandos.LoginPostCommand");
             rotas.put("/inicial.html", "Comandos.IndexCommand");
             rotas.put("/registro.html", "Comandos.RegistroCommand");
-            rotas.put("/item-novo.html", "Comandos.ItemNovoCommand");
             
             String clazzName = rotas.get(request.getServletPath());
             
