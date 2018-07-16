@@ -11,7 +11,35 @@ public class Comentario {
     private LocalDateTime dataAtualizacao;
     private Usuario usuario;
     private Item item;
-    private List<AvaliacaoComentario> avaliacoes;
+    private List<AvaliacaoComentario> avaliacoes;   
+    private Integer totalPositivas;
+    private Integer totalNegativas;
+    private Integer avaliacaofinal;
+
+    public Integer getTotalPositivas() {
+        return totalPositivas;
+    }
+
+    public void setTotalPositivas(Integer totalPositivas) {
+        this.totalPositivas = totalPositivas;
+    }
+
+    public Integer getTotalNegativas() {
+        return totalNegativas;
+    }
+
+    public void setTotalNegativas(Integer totalNegativas) {
+        this.totalNegativas = totalNegativas;
+    }
+
+    public Integer getAvaliacaofinal() {
+        return avaliacaofinal;
+    }
+
+    public void setAvaliacaofinal(Integer avaliacaofinal) {
+        this.avaliacaofinal = avaliacaofinal;
+    }
+
 
     public Comentario(Integer id, String comentario, LocalDateTime dataCriacao, LocalDateTime dataAtualizacao, Usuario usuario, Item item, List<AvaliacaoComentario> avaliacoes) {
         this.id = id;

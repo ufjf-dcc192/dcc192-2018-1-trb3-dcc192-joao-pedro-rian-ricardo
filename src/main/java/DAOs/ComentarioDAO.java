@@ -140,4 +140,35 @@ public class ComentarioDAO {
         }
         return comentarios;
     }
+
+    public List<Comentario> getCincoComentariosByItem(Item item) {
+        List<Comentario> comentarios = new ArrayList<>();
+        String sql = "SELECT C.ID,\n"
+                + "       COALESCE(SUM(AC.POSITIVA),0) AS TOTALPOSITIVA,\n"
+                + "       COALESCE(SUM(AC.NEGATIVA),0) AS TOTALNEGATIVA,\n"
+                + "       COALESCE(SUM(AC.POSITIVA - AC.NEGATIVA),0) AS AVALIACAOFINAL\n"
+                + "FROM COMENTARIO C\n"
+                + "     LEFT JOIN AVALIACAO_COMENTARIO AC ON (C.ID = AC.ID_COMENTARIO)\n"
+                + "WHERE C.ID_ITEM = ?\n"
+                + "GROUP BY 1\n"
+                + "ORDER BY 4 DESC, C.DATA_CRIACAO DESC\n"
+                + "LIMIT 5";
+        try (PreparedStatement comando = conexao.prepareStatement(sql)) {
+            comando.setInt(1, item.getId());
+            ResultSet resultado = comando.executeQuery();
+            if (resultado.next()) {
+                do {
+                    Comentario comentario = this.getComentarioById(resultado.getInt(1));
+                    comentario.setTotalPositivas(resultado.getInt(2));
+                    comentario.setTotalNegativas(resultado.getInt(3));
+                    comentario.setAvaliacaofinal(resultado.getInt(4));
+                    comentarios.add(comentario);
+                } while (resultado.next());
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ItemDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return comentarios;
+    }
+
 }

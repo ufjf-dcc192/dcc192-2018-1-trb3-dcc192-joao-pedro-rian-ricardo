@@ -15,7 +15,35 @@ public class Item {
     private List<Comentario> comentarios;
     private List<Link> links;
     private List<AvaliacaoItem> avaliacoes;
+    private Integer totalPositivas;
+    private Integer totalNegativas;
+    private Integer avaliacaofinal;
 
+    public Integer getTotalPositivas() {
+        return totalPositivas;
+    }
+
+    public void setTotalPositivas(Integer totalPositivas) {
+        this.totalPositivas = totalPositivas;
+    }
+
+    public Integer getTotalNegativas() {
+        return totalNegativas;
+    }
+
+    public void setTotalNegativas(Integer totalNegativas) {
+        this.totalNegativas = totalNegativas;
+    }
+
+    public Integer getAvaliacaofinal() {
+        return avaliacaofinal;
+    }
+
+    public void setAvaliacaofinal(Integer avaliacaofinal) {
+        this.avaliacaofinal = avaliacaofinal;
+    }
+
+    
     public List<AvaliacaoItem> getAvaliacoes() {
         return avaliacoes;
     }
