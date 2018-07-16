@@ -54,7 +54,7 @@ public class ComentarioServlet extends HttpServlet {
             Map<String, String> rotas;
             rotas = new HashMap<>();
             rotas.put("/comentar.html", "Comandos.ComentarCommand");
-            rotas.put("/ranking.html", "Comandos.RankingCommand");
+            rotas.put("/ranking.html", "Comandos.RankingPostCommand");
             String clazzName = rotas.get(request.getServletPath());
 
             Comando comando;
