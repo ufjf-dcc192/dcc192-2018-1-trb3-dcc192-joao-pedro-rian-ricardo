@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Pedro
  */
-public class RankigCommand implements Comando {
+public class RankingCommand implements Comando {
 
     @Override
     public void exec(HttpServletRequest request, HttpServletResponse response) {
@@ -25,7 +25,7 @@ public class RankigCommand implements Comando {
             RequestDispatcher despachante = request.getRequestDispatcher("/WEB-INF/ranking.jsp");
             despachante.forward(request, response);
         } catch (ServletException | IOException ex) {
-            Logger.getLogger(RankigCommand.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RankingCommand.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
