@@ -26,7 +26,7 @@
             </form>
         </div>
     </c:if>
-    <c:if test="${!empty itens}">
+    <c:if test="${not empty itens}">
         <div  class="container-fluid">
             <form method="post">
                 <h4>Escolha como deseja ordenar os itens:</h4>
