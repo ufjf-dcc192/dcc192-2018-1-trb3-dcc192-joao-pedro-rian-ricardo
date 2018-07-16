@@ -182,7 +182,6 @@ public class ItemDAO {
 
     }
 
-
     private void adicionarLink(Integer id, Link link) {
         String sql = "INSERT INTO \n"
                 + "  link\n"
@@ -197,9 +196,36 @@ public class ItemDAO {
         try (PreparedStatement comando = conexao.prepareStatement(sql)) {
             comando.setInt(1, id);
             comando.setString(2, link.getLink());
+            comando.execute();
+            comando.close();
         } catch (SQLException ex) {
             Logger.getLogger(ItemDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public List<Item> getItensOrdenados(Integer ordenacao) {
+        String sql = "SELECT item.id,item.data_criacao,item.data_atualizacao,\n"
+                + "       SUM(AI.POSITIVA - AI.NEGATIVA) AS AVALIACAOFINAL,\n"
+                + "       sum(ai.positiva + ai.negativa) as totalAvaliacao\n"
+                + "FROM ITEM\n"
+                + "     INNER JOIN AVALIACAO_ITEM AI ON (ITEM.ID = AI.ID_ITEM)\n"
+                + " group by 1\n"
+                + " order by ?";
+        List<Item> itens = new ArrayList<>();
+        try (PreparedStatement comando = conexao.prepareStatement(sql)) {
+            comando.setInt(1, ordenacao);
+            ResultSet resultado = comando.executeQuery();
+            if (resultado.next()) {
+                do {
+                    Item item = this.getItemById(resultado.getInt(1));
+                    itens.add(item);
+                } while (resultado.next());
+            }
+            comando.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(ItemDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return itens;
     }
 
 }
