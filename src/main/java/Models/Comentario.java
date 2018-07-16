@@ -13,6 +13,17 @@ public class Comentario {
     private Item item;
     private List<AvaliacaoComentario> avaliacoes;
 
+    public Comentario(Integer id, String comentario, LocalDateTime dataCriacao, LocalDateTime dataAtualizacao, Usuario usuario, Item item, List<AvaliacaoComentario> avaliacoes) {
+        this.id = id;
+        this.comentario = comentario;
+        this.dataCriacao = dataCriacao;
+        this.dataAtualizacao = dataAtualizacao;
+        this.usuario = usuario;
+        this.item = item;
+        this.avaliacoes = avaliacoes;
+    }
+    
+    
     public List<AvaliacaoComentario> getAvaliacoes() {
         return avaliacoes;
     }

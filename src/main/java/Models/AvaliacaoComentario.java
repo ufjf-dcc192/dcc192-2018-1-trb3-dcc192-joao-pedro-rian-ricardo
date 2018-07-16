@@ -51,6 +51,15 @@ public class AvaliacaoComentario {
     public void setComentario(Comentario comentario) {
         this.comentario = comentario;
     }
+
+    public AvaliacaoComentario(Integer id, Integer positiva, Integer negativa, Usuario usuario, Comentario comentario) {
+        this.id = id;
+        this.positiva = positiva;
+        this.negativa = negativa;
+        this.usuario = usuario;
+        this.comentario = comentario;
+    }
+    
     
         
 }
