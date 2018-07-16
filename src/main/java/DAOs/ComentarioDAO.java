@@ -72,4 +72,32 @@ public class ComentarioDAO {
         return avaliacoes;
 
     }
+
+    public void adicionarComentario(Comentario comentario) {
+        String sql = "INSERT INTO \n"
+                + "  public.comentario\n"
+                + "(\n"
+                + "  id_usuario,\n"
+                + "  id_item,\n"
+                + "  comentario,\n"
+                + "  data_criacao,\n"
+                + "  data_atualizacao\n"
+                + ")\n"
+                + "VALUES (\n"
+                + "  ?,\n"
+                + "  ?,\n"
+                + "  ?,\n"
+                + "  current_timestamp,\n"
+                + "  current_timestamp\n"
+                + ")";
+        try (PreparedStatement comando = conexao.prepareStatement(sql)){
+            comando.setInt(1, comentario.getUsuario().getId());
+            comando.setInt(2, comentario.getItem().getId());
+            comando.setString(3, comentario.getComentario());
+            comando.execute();
+            comando.close();
+                    } catch (SQLException ex) {
+            Logger.getLogger(ComentarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

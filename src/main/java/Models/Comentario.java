@@ -22,7 +22,12 @@ public class Comentario {
         this.item = item;
         this.avaliacoes = avaliacoes;
     }
-    
+
+    public Comentario(String comentario, Usuario usuario, Item item) {
+        this.comentario = comentario;
+        this.usuario = usuario;
+        this.item = item;
+    }    
     
     public List<AvaliacaoComentario> getAvaliacoes() {
         return avaliacoes;
