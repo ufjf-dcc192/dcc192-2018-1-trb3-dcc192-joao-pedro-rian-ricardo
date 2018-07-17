@@ -16,19 +16,19 @@
             <form method="post">
                 <div class="form-group">
                     <label>Nome Completo:</label>
-                    <input class="form-control" type="text" placeholder="Insira aqui o seu nome completo" name="nome"/><br/>
+                    <input class="form-control" required="required" type="text" placeholder="Insira aqui o seu nome completo" name="nome"/><br/>
                 </div>
                 <div class="form-group">
                     <label>E-mail:</label>    
-                    <input class="form-control" type="text" placeholder="Insira aqui o seu e-mail" name="email"/><br/>
+                    <input class="form-control" required="required" type="text" placeholder="Insira aqui o seu e-mail" name="email"/><br/>
                 </div>
                 <div class="form-group">
                     <label>Login:</label>    
-                    <input class="form-control" type="text" placeholder="Insira aqui o seu login" name="email"/><br/>
+                    <input class="form-control" required="required" type="text" placeholder="Insira aqui o seu login" name="email"/><br/>
                 </div>
                 <div class="form-group">
                     <label>Senha:</label>    
-                    <input class="form-control" type="password" placeholder="Insira aqui a sua senha" name="senha"/><br/>
+                    <input class="form-control" required="required" type="password" placeholder="Insira aqui a sua senha" name="senha"/><br/>
                 </div>
                 <input type="submit" class="btn btn-success"/>
                 <input type="reset" class="btn btn-danger"/>
