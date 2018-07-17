@@ -263,7 +263,7 @@ public class ItemDAO {
                 + "       SUM(AI.NEGATIVA) AS TOTALNEGATIVA,\n"
                 + "       SUM(AI.POSITIVA - AI.NEGATIVA) AS AVALIACAOFINAL\n"
                 + "FROM ITEM\n"
-                + "     INNER JOIN AVALIACAO_ITEM AI ON (ITEM.ID = AI.ID_ITEM)\n"
+                + "     LEFT JOIN AVALIACAO_ITEM AI ON (ITEM.ID = AI.ID_ITEM)\n"
                 + "where item.id=?\n"
                 + "GROUP BY 1";
         Item item = null;
