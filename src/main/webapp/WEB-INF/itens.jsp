@@ -2,7 +2,9 @@
 <title>Lista de Itens</title>
 </head>
 <body>
-
+    <c:if test="${excluido == true}">
+        <h4 class="text-center text-success"> Item excluído com sucesso</h4>
+    </c:if>
     <h2 class="text-center text-success">Veja os itens cadastrados no sistema</h2>
     <br>
     <table class="table table-striped">
