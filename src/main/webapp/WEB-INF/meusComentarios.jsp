@@ -8,10 +8,11 @@
 <title>Comentários do usuario</title>
 </head>
 <body>
+    <br/>
     <c:if test="${excluido == true}">
-        <h4 class="text-center text-success">Comentário excluído com sucesso</h4>
+        <h4 class="text-center alert-success">Comentário excluído com sucesso</h4>
     </c:if>
-    <h6 class="text-center">Veja todos os comentários do usuário ${usuario.nome} abaixo:</h6>
+    <h6 class="text-center">Veja todos os seus comentários abaixo:</h6>
     <table class="table table-striped">
         <thead class="text-center">
         <th>Comentário</th>

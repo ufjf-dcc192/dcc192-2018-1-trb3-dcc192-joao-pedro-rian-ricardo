@@ -7,10 +7,11 @@
 <title>Comentar</title>
 </head>
 <body>
-
+<br/>
     <c:if test="${enviado == true}">
         <h4 class="text-center alert-success">Comentário realizado com sucesso!</h4>
     </c:if>
+        <br/>
     <div class="container-fluid">
         <form class="form-group" method="post">
             <div class="form-group">
