@@ -40,4 +40,6 @@
         </div>
         <div class="col"></div>
     </div>
+    <br/>
+    <br/>
     <%@include file="jspf/rodape.jspf" %>

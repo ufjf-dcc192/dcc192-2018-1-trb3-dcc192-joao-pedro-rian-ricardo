@@ -7,14 +7,17 @@
 <title>Comentar</title>
 </head>
 <body>
+
     <c:if test="${enviado == 'true'}">
-        <h4 class="text-success">Comentário realizado com sucesso!</h4>
+        <h4 class="text-center alert-success">Comentário realizado com sucesso!</h4>
     </c:if>
-    <form class="form-group">
-        <div class="form-group">
-            <label for="exampleFormControlTextarea1">Faça seu comentario:</label>
-            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-        </div>
-        <button class="btn btn-primary" type="submit">Enviar</button>
-    </form>
+    <div class="container-fluid">
+        <form class="form-group">
+            <div class="form-group">
+                <label for="exampleFormControlTextarea1">Faça seu comentario:</label>
+                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+            </div>
+            <button class="btn btn-primary" type="submit">Enviar</button>
+        </form>
+    </div>
     <%@include file="jspf/rodape.jspf" %>
