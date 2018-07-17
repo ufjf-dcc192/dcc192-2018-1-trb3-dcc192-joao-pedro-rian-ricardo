@@ -17,7 +17,7 @@
                 <br/>
             </div>
         </div>
-        <img class="center" src="icones/curadoria.png">
+                <img src="icones/curadoria.png" width="800" height="315">
     </div>
     <br/>
     <br/>
