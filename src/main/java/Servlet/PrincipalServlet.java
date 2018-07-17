@@ -47,7 +47,7 @@ public class PrincipalServlet extends HttpServlet {
             rotas = new HashMap<>();
             rotas.put("/index.html", "Comandos.LoginPostCommand");
             rotas.put("/inicial.html", "Comandos.IndexCommand");
-            rotas.put("/registro.html", "Comandos.RegistroCommand");
+            rotas.put("/registro.html", "Comandos.RegistroPostCommand");
             
             String clazzName = rotas.get(request.getServletPath());
             
