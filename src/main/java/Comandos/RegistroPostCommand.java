@@ -23,7 +23,7 @@ public class RegistroPostCommand implements Comando {
             UsuarioDAO dao = UsuarioDAO.getInstance();
             Usuario usuario = new Usuario(nome, email, login, senha);
             dao.adicionar(usuario);
-            RequestDispatcher despachante = request.getRequestDispatcher("/WEB-INF/login.jsp");
+            RequestDispatcher despachante = request.getRequestDispatcher("/WEB-INF/registro.jsp");
             despachante.forward(request, response);
         } catch (ServletException | IOException ex) {
             Logger.getLogger(RegistroPostCommand.class.getName()).log(Level.SEVERE, null, ex);

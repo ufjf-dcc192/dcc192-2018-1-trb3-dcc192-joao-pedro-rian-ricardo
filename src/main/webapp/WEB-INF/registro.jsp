@@ -34,6 +34,10 @@
                 <input type="reset" class="btn btn-danger"/>
             </form>
         </div>
+        <c:if test="${cadastro == true}">
+            <h5 class="text-center alert-success"> Cadastro Realizado!</h5>
+        </c:if>
+            <a href="index.html" class="btn btn-primary" >Voltar</a>
         <div class="col"></div>
     </div>
     <%@include file="jspf/rodape.jspf" %>

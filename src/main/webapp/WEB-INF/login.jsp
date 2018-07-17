@@ -8,9 +8,7 @@
         <title>Login</title>
     </head>
     <body>
-        <c:if test="${cadastro == true}">
-            <h5 class="text-center text-success"> Cadastro Realizado!</h5>
-        </c:if>
+        
         <div class="row">
             <div class="col"></div>
             <div class="col"></div>
