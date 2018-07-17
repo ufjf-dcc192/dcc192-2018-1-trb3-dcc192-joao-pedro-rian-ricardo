@@ -21,7 +21,7 @@ public class RegistroPostCommand implements Comando {
         Usuario usuario = new Usuario(nome,login, email, senha);     
         dao.adicionar(usuario);
          try {
-             response.sendRedirect("login.html");
+             response.sendRedirect("index.html");
          } catch (IOException ex) {
              Logger.getLogger(RegistroPostCommand.class.getName()).log(Level.SEVERE, null, ex);
          }
