@@ -191,4 +191,16 @@ public class ComentarioDAO {
         }
         return false;
     }
+    
+    public void excluirComentario(Integer id) {
+        try {
+            String sql = "DELETE * FROM comentario WHERE id = ?";
+            PreparedStatement comando = conexao.prepareStatement(sql);
+            comando.setInt(1,id);
+            comando.execute();
+            comando.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(ItemDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }
