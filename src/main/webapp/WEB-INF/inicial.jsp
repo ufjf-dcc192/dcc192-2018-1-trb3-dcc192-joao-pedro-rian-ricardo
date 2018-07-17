@@ -17,7 +17,11 @@
                 <br/>
             </div>
         </div>
-                <img src="icones/curadoria.png" width="800" height="315">
+        <div class="row">
+            <div class="col"></div>
+            <div class="col"><img src="icones/curadoria.png" width="800" height="270"></div>
+            <div class="col"></div>
+        </div>
     </div>
     <br/>
     <br/>
