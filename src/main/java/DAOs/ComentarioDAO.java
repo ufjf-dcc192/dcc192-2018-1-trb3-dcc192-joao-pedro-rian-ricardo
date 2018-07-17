@@ -1,7 +1,6 @@
 package DAOs;
 
 import Models.AvaliacaoComentario;
-import Models.AvaliacaoItem;
 import Models.Comentario;
 import Models.Item;
 import Models.Usuario;
@@ -63,16 +62,20 @@ public class ComentarioDAO {
         try (PreparedStatement comando = conexao.prepareStatement(sql)) {
             comando.setInt(1, item.getId());
             ResultSet resultado = comando.executeQuery();
-            Comentario comentario = new Comentario();
-            comentario.setId(resultado.getInt(1));
-            comentario.setItem(item);
-            comentario.setUsuario(UsuarioDAO.getInstance().getUsuarioById(resultado.getInt(2)));
-            comentario.setComentario(resultado.getString(4));
-            comentario.setDataCriacao(resultado.getTimestamp(5).toLocalDateTime());
-            comentario.setDataAtualizacao(resultado.getTimestamp(6).toLocalDateTime());
-            comentario.setAvaliacoes(this.getAvaliacoes(comentario));
-            comentario.setAvaliado(this.haAvaliacaoComentario(idUsuario, comentario.getId()));
-            comentarios.add(comentario);
+            if (resultado.next()) {
+                do {
+                    Comentario comentario = new Comentario();
+                    comentario.setId(resultado.getInt(1));
+                    comentario.setItem(item);
+                    comentario.setUsuario(UsuarioDAO.getInstance().getUsuarioById(resultado.getInt(2)));
+                    comentario.setComentario(resultado.getString(4));
+                    comentario.setDataCriacao(resultado.getTimestamp(5).toLocalDateTime());
+                    comentario.setDataAtualizacao(resultado.getTimestamp(6).toLocalDateTime());
+                    comentario.setAvaliacoes(this.getAvaliacoes(comentario));
+                    comentario.setAvaliado(this.haAvaliacaoComentario(idUsuario, comentario.getId()));
+                    comentarios.add(comentario);
+                } while (resultado.next());
+            }
         } catch (SQLException ex) {
             Logger.getLogger(ComentarioDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -127,7 +130,7 @@ public class ComentarioDAO {
 
     public List<Comentario> getComentariosByUsuario(int idUsuario) {
         List<Comentario> comentarios = new ArrayList<>();
-        String sql = "SELECT * FROM COMENTARIO INNER JOIN ITEM ON(ITEM.ID = COMENTARIO.ID_ITEM) WHERE ID_USUARIO = ?";
+        String sql = "SELECT * FROM COMENTARIO INNER JOIN ITEM ON(ITEM.ID = COMENTARIO.ID_ITEM) WHERE comentario.ID_USUARIO = ?";
         try (PreparedStatement comando = conexao.prepareStatement(sql)) {
             comando.setInt(1, idUsuario);
             ResultSet resultado = comando.executeQuery();

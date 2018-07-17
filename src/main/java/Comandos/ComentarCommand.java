@@ -27,7 +27,7 @@ public class ComentarCommand implements Comando{
     public void exec(HttpServletRequest request, HttpServletResponse response) {
         try {
             Integer idUsuario = (Integer) request.getSession().getAttribute("usuarioID");
-            Integer idItem = Integer.parseInt(request.getParameter("item"));
+            Integer idItem = Integer.parseInt(request.getParameter("idItem"));
             request.setAttribute("usuario", idUsuario);
             request.setAttribute("item", idItem);
             request.setAttribute("enviado", null);

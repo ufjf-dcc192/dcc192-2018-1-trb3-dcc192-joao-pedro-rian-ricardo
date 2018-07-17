@@ -18,7 +18,7 @@ public class ItemComentariosCommand implements Comando {
     @Override
     public void exec(HttpServletRequest request, HttpServletResponse response) {
         try {
-            Integer idItem = Integer.parseInt(request.getParameter("item"));
+            Integer idItem = Integer.parseInt(request.getParameter("idItem"));
             ItemDAO dao = ItemDAO.getInstance();
             Item item = dao.getItemById(idItem);
             Integer idUsuario = (Integer) request.getSession().getAttribute("usuarioID");

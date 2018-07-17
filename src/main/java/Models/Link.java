@@ -1,6 +1,10 @@
 package Models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Link {
+
     private Integer id;
     private String link;
     private Item item;
@@ -18,8 +22,10 @@ public class Link {
         this.id = id;
         this.link = link;
     }
-    
-    
+
+    private Link(String link) {
+        this.link = link;
+    }
 
     public Integer getId() {
         return id;
@@ -44,6 +50,14 @@ public class Link {
     public void setItem(Item item) {
         this.item = item;
     }
-        
-    
+
+    public static List<Link> StringToListLink(String[] links) {
+        List<Link> linksList = new ArrayList<>();
+        for (String Strlink : links) {
+            Link link = new Link(Strlink);
+            linksList.add(link);
+        }
+        return linksList;
+    }
+
 }
