@@ -24,7 +24,7 @@
                 </div>
                 <div class="form-group">
                     <label>Login:</label>    
-                    <input class="form-control" required="required" type="text" placeholder="Insira aqui o seu login" name="email"/><br/>
+                    <input class="form-control" required="required" type="text" placeholder="Insira aqui o seu login" name="login"/><br/>
                 </div>
                 <div class="form-group">
                     <label>Senha:</label>    

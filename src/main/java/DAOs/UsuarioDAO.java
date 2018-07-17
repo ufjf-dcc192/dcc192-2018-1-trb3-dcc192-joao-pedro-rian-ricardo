@@ -33,11 +33,12 @@ public class UsuarioDAO {
     }
 
     public void adicionar(Usuario usuario) {
-        String sql = "INSERT INTO USUARIO(nome, email,senha) VALUES(?,?,MD5(?))";
+        String sql = "INSERT INTO USUARIO(nome, email,senha) VALUES(?,?,?,MD5(?))";
         try (PreparedStatement comando = conexao.prepareStatement(sql)) {
             comando.setString(1, usuario.getNome());
             comando.setString(2, usuario.getEmail());
-            comando.setString(3, usuario.getSenha());
+            comando.setString(3, usuario.getLogin());
+            comando.setString(4, usuario.getSenha());
             comando.execute();
             comando.close();
         } catch (SQLException ex) {
