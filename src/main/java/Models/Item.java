@@ -18,7 +18,25 @@ public class Item {
     private Integer totalPositivas;
     private Integer totalNegativas;
     private Integer avaliacaofinal;
+    private boolean comentado;
+    private boolean avaliado;
 
+    public boolean isComentado() {
+        return comentado;
+    }
+
+    public void setComentado(boolean comentado) {
+        this.comentado = comentado;
+    }
+
+    public boolean isAvaliado() {
+        return avaliado;
+    }
+
+    public void setAvaliado(boolean avaliado) {
+        this.avaliado = avaliado;
+    }
+    
     public Integer getTotalPositivas() {
         return totalPositivas;
     }

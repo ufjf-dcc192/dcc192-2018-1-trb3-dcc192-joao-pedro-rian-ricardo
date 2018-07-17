@@ -1,10 +1,12 @@
 package Comandos;
 
-import DAOs.ComentarioDAO;
 import DAOs.ItemDAO;
-import Models.Comentario;
+import DAOs.UsuarioDAO;
 import Models.Item;
+import Models.Usuario;
+import com.google.gson.Gson;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -13,22 +15,21 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class ItemComentariosCommand implements Comando {
+public class ItensCommand implements Comando {
 
     @Override
     public void exec(HttpServletRequest request, HttpServletResponse response) {
+
         try {
-            Integer idItem = Integer.parseInt(request.getParameter("item"));
-            ItemDAO dao = ItemDAO.getInstance();
-            Item item = dao.getItemById(idItem);
+            response.setContentType("text/html;charset=UTF-8");
             Integer idUsuario = (Integer) request.getSession().getAttribute("usuarioID");
-            List<Comentario> comentarios = ComentarioDAO.getInstance().getComentariobyItem(item,idUsuario);
-            request.setAttribute("comentarios", comentarios);
-            RequestDispatcher despachante = request.getRequestDispatcher("/WEB-INF/itemComentarios.jsp");
+            List<Item> itens = ItemDAO.getInstance().getAllItens(idUsuario);
+            request.setAttribute("itens", itens);
+            RequestDispatcher despachante = request.getRequestDispatcher("/WEB-INF/itens.jsp");
             despachante.forward(request, response);
         } catch (ServletException | IOException ex) {
-            Logger.getLogger(ItemComentariosCommand.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ItensCommand.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
 
+    }
 }

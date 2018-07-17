@@ -1,20 +1,32 @@
 package Models;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.List;
 
-
 public class Comentario {
+
     private Integer id;
     private String comentario;
     private LocalDateTime dataCriacao;
     private LocalDateTime dataAtualizacao;
     private Usuario usuario;
     private Item item;
-    private List<AvaliacaoComentario> avaliacoes;   
+    private List<AvaliacaoComentario> avaliacoes;
     private Integer totalPositivas;
     private Integer totalNegativas;
     private Integer avaliacaofinal;
+    private boolean avaliado;
+
+    public boolean isAvaliado() {
+        return avaliado;
+    }
+
+    public void setAvaliado(boolean avaliado) {
+        this.avaliado = avaliado;
+    }
+    
 
     public Integer getTotalPositivas() {
         return totalPositivas;
@@ -40,7 +52,6 @@ public class Comentario {
         this.avaliacaofinal = avaliacaofinal;
     }
 
-
     public Comentario(Integer id, String comentario, LocalDateTime dataCriacao, LocalDateTime dataAtualizacao, Usuario usuario, Item item, List<AvaliacaoComentario> avaliacoes) {
         this.id = id;
         this.comentario = comentario;
@@ -55,8 +66,8 @@ public class Comentario {
         this.comentario = comentario;
         this.usuario = usuario;
         this.item = item;
-    }    
-    
+    }
+
     public List<AvaliacaoComentario> getAvaliacoes() {
         return avaliacoes;
     }
@@ -64,8 +75,6 @@ public class Comentario {
     public void setAvaliacoes(List<AvaliacaoComentario> avaliacoes) {
         this.avaliacoes = avaliacoes;
     }
-    
-    
 
     public Comentario() {
     }
@@ -117,8 +126,13 @@ public class Comentario {
     public void setItem(Item item) {
         this.item = item;
     }
-   
-    
-    
-    
+
+    public String getStringDataAtu() {
+        return this.dataAtualizacao.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM));
+    }
+
+    public String getStringDataCriacao() {
+        return this.dataCriacao.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM));
+    }
+
 }
