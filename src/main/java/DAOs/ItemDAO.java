@@ -257,4 +257,82 @@ public class ItemDAO {
         return itens;
     }
 
+    public Item getItemDetalhes(Integer idITem) {
+        String sql = "SELECT ITEM.ID,\n"
+                + "       SUM(AI.POSITIVA) AS TOTALPOSITIVA,\n"
+                + "       SUM(AI.NEGATIVA) AS TOTALNEGATIVA,\n"
+                + "       SUM(AI.POSITIVA - AI.NEGATIVA) AS AVALIACAOFINAL\n"
+                + "FROM ITEM\n"
+                + "     INNER JOIN AVALIACAO_ITEM AI ON (ITEM.ID = AI.ID_ITEM)\n"
+                + "where item.id=?\n"
+                + "GROUP BY 1";
+        Item item = null;
+        try (PreparedStatement comando = conexao.prepareStatement(sql)) {
+            comando.setInt(1, idITem);
+            ResultSet resultado = comando.executeQuery();
+            if (resultado.next()) {
+                item = this.getItemById(resultado.getInt(1));
+                item.setTotalPositivas(resultado.getInt(2));
+                item.setTotalNegativas(resultado.getInt(3));
+                item.setAvaliacaofinal(resultado.getInt(4));
+                item.setComentarios(ComentarioDAO.getInstance().getCincoComentariosByItem(item));
+            }
+            comando.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(ItemDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return item;
+    }
+
+    public List<Item> getAllItens(Integer usuario) {
+        String sql = "SELECT ITEM.ID FROM ITEM ORDER BY ID";
+        List<Item> itens = new ArrayList<>();
+        try (PreparedStatement comando = conexao.prepareStatement(sql)) {
+            ResultSet resultado = comando.executeQuery();
+            if (resultado.next()) {
+                do {
+                    Item item = this.getItemById(resultado.getInt(1));
+                    item.setComentado(this.haComentario(usuario,item.getId()));
+                    item.setAvaliado(this.haAvaliacaoItem(usuario,item.getId()));
+                    itens.add(item);
+                } while (resultado.next());
+            }
+            comando.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(ItemDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return itens;
+    }
+
+    public boolean haComentario(Integer idUsuario, Integer idItem) {
+        String sql = "SELECT * FROM COMENTARIO WHERE ID_USUARIO = ? and ID_ITEM = ?";
+        try (PreparedStatement comando = conexao.prepareStatement(sql)) {
+            comando.setInt(1, idUsuario);
+            comando.setInt(2, idItem);
+            ResultSet resultado = comando.executeQuery();
+            if (resultado.next()) {
+                return true;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ItemDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+    
+    public boolean haAvaliacaoItem(Integer idUsuario, Integer idItem) {
+        String sql = "SELECT * FROM AVALIACAO_ITEM WHERE ID_USUARIO = ? and ID_ITEM = ?";
+        try (PreparedStatement comando = conexao.prepareStatement(sql)) {
+            comando.setInt(1, idUsuario);
+            comando.setInt(2, idItem);
+            ResultSet resultado = comando.executeQuery();
+            if (resultado.next()) {
+                return true;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ItemDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+    
+
 }

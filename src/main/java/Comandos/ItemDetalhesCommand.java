@@ -1,10 +1,9 @@
 
 package Comandos;
 
-import DAOs.UsuarioDAO;
-import Models.Troll;
+import DAOs.ItemDAO;
+import Models.Item;
 import java.io.IOException;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
@@ -17,7 +16,10 @@ public class ItemDetalhesCommand implements Comando {
     @Override
     public void exec(HttpServletRequest request, HttpServletResponse response) {
         try {
-            RequestDispatcher despachante = request.getRequestDispatcher("/WEB-INF/trolls.jsp");
+            Integer idItem = Integer.parseInt(request.getParameter("idItem"));
+            Item item= ItemDAO.getInstance().getItemDetalhes(idItem);
+            request.setAttribute("item", item);
+            RequestDispatcher despachante = request.getRequestDispatcher("/WEB-INF/item.jsp");
             despachante.forward(request, response);
         } catch (ServletException | IOException ex) {
             Logger.getLogger(ItemDetalhesCommand.class.getName()).log(Level.SEVERE, null, ex);
