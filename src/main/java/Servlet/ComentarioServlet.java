@@ -28,6 +28,7 @@ public class ComentarioServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
+
         try {
             Map<String, String> rotas;
             rotas = new HashMap<>();
@@ -45,7 +46,7 @@ public class ComentarioServlet extends HttpServlet {
 
             comando.exec(request, response);
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
-            Logger.getLogger(ItemServlet.class.getName()).log(Level.SEVERE, null, ex);
+            response.sendRedirect("index.html");
         }
     }
 

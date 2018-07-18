@@ -61,7 +61,6 @@
     $("#enviar").click(function () {
         $("#links option").each(function () {
             $(this).prop('selected', true);
-            alert($(this).val());
         }
         );
 

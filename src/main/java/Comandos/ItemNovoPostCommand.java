@@ -20,6 +20,7 @@ public class ItemNovoPostCommand implements Comando {
     public void exec(HttpServletRequest request, HttpServletResponse response) {
 
         try {
+            request.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
             String[] values = request.getParameterValues("links");
             List<Link> links = Link.StringToListLink(values);
@@ -29,7 +30,7 @@ public class ItemNovoPostCommand implements Comando {
             item.setLinks(links);
             item.setUsuario((Usuario)request.getSession().getAttribute("usuarioCompleto"));
             ItemDAO.getInstance().adicionarItem(item);
-            response.sendRedirect("item-listar.html");
+            response.sendRedirect("item-listar.html?cadastrado=true");
         } catch (IOException ex) {
             Logger.getLogger(ItemNovoPostCommand.class.getName()).log(Level.SEVERE, null, ex);
         }

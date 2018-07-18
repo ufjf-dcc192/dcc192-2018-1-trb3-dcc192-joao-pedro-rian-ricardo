@@ -67,6 +67,13 @@ public class Comentario {
         this.usuario = usuario;
         this.item = item;
     }
+    
+    public Comentario(Integer id, String comentario, Usuario usuario, Item item) {
+        this.id=id;
+        this.comentario = comentario;
+        this.usuario = usuario;
+        this.item = item;
+    }
 
     public List<AvaliacaoComentario> getAvaliacoes() {
         return avaliacoes;

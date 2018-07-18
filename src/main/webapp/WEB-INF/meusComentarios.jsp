@@ -10,23 +10,27 @@
 <body>
     <br/>
     <c:if test="${excluido == true}">
+        <div class="alert alert-success" role="alert">
         <h4 class="text-center alert-success">Comentário excluído com sucesso</h4>
+        </div>
     </c:if>
     <h6 class="text-center">Veja todos os seus comentários abaixo:</h6>
     <table class="table table-striped">
         <thead class="text-center">
-        <th>Comentário</th>
-        <th>Item</th>
-        <th>Opções</th>
-    </thead>
-    <tbody class="text-center">
-        <c:forEach var="comentario" items="${comentarios}">
             <tr>
-                <td>${comentario.comentario}</td>
-                <td>${comentario.item.titulo}</td>
-                <td><a href="excluirComentario.html?idComent=${comentario.id}" class="btn btn-danger">Excluir</a></td>
+                <th>Comentário</th>
+                <th>Item</th>
+                <th>Opções</th>
             </tr>
-        </c:forEach>
-    </tbody>
-</table>
-<%@include file="jspf/rodape.jspf" %>
+        </thead>
+        <tbody class="text-center">
+            <c:forEach var="comentario" items="${comentarios}">
+                <tr>
+                    <td>${comentario.comentario}</td>
+                    <td>${comentario.item.titulo}</td>
+                    <td><a href="excluirComentario.html?idComent=${comentario.id}" class="btn btn-danger">Excluir</a></td>
+                </tr>
+            </c:forEach>
+        </tbody>
+    </table>
+    <%@include file="jspf/rodape.jspf" %>

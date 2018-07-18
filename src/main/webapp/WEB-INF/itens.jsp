@@ -3,11 +3,25 @@
 </head>
 <body>
     <c:if test="${excluido == true}">
+        <div class="alert alert-success" role="alert">
         <h4 class="text-center text-success"> Item excluído com sucesso</h4>
+        </div>
+    </c:if>
+    <c:if test="${comentado == true}">
+        <div class="alert alert-success" role="alert">
+            <h4 class="text-center alert-success">Comentário realizado com sucesso</h4>
+        </div>
+    </c:if>
+    
+    <c:if test="${cadastrado == true}">
+        <div class="alert alert-success" role="alert">
+            <h4 class="text-center alert-success">Item cadastrado com sucesso</h4>
+        </div>
     </c:if>
     <h2 class="text-center text-success">Veja os itens cadastrados no sistema</h2>
     <br>
-    <table class="table table-striped">
+    <div class="container-fluid">
+    <table class="table table-striped table-responsive">
         <thead class="text-center">
             <tr>
                 <th>Título</th>
@@ -28,10 +42,10 @@
                             <td>${item.getStringDataCriacao()}</td> 
                             <td>${item.getStringDataAtu()}</td>
                             <td>${item.usuario.nome}</td>
-                            <td><a href="item.html?idItem=${item.id}">Ver Detalhes</a></td>
-                            <td><a href="itemComentarios.html?idItem=${item.id}">Ver Comentários</a></td>
-                            <td colspan="2"><a href="item-editar.html?idItem=${item.id}">Editar</a></td>
-                            <td colspan="2"><a href="item-excluir.html?idItem=${item.id}">Excluir</a></td>
+                            <td><a href="item.html?idItem=${item.id}" class="btn btn-primary"><i class="fas fa-info-circle"></i> Ver Detalhes</a></td>
+                            <td><a href="itemComentarios.html?idItem=${item.id}" class="btn btn-primary" ><i class="fas fa-comment-dots"></i> Ver Comentários</a></td>
+                            <td colspan="1"><a href="item-editar.html?idItem=${item.id}" class="btn btn-warning" ><i class="fas fa-edit"></i> Editar</a></td>
+                            <td colspan="2"><a href="item-excluir.html?idItem=${item.id}" class="btn btn-danger" ><i class="fas fa-trash-alt"></i> Excluir</a></td>
                         </tr>
                     </c:when>
                     <c:otherwise>
@@ -41,11 +55,11 @@
                             <td>${item.getStringDataCriacao()}</td> 
                             <td>${item.getStringDataAtu()}</td>
                             <td>${item.usuario.nome}</td>
-                            <td><a href="item.html?idItem=${item.id}">Ver Detalhes</a></td>
-                            <td><a href="itemComentarios.html?idItem=${item.id}">Ver Comentários</a></td>
+                            <td><a href="item.html?idItem=${item.id}" class="btn btn-primary"><i class="fas fa-info-circle"></i> Ver Detalhes</a></td>
+                            <td><a href="itemComentarios.html?idItem=${item.id}" class="btn btn-primary" ><i class="fas fa-comment-dots"></i> Ver Comentários</a></td>
                             <c:choose>
                                 <c:when test="${not item.comentado}">
-                                    <td><a href="comentar.html?idItem=${item.id}">Comentar</a></td>
+                                    <td><a href="comentar.html?idItem=${item.id}" class="btn btn-warning" ><i class="fas fa-edit"></i>Comentar</a></td>
                                 </c:when>
                                 <c:otherwise>
                                     <td>Você já comentou este item</td>
@@ -53,8 +67,8 @@
                             </c:choose>
                             <c:choose>
                                 <c:when test="${not item.avaliado}">
-                                    <td><a href="avaliarItem.html?idItem=${item.id}&aval=positiva">Curtir</a></td>
-                                    <td><a href="avaliarItem.html?idItem=${item.id}&aval=negativa">Descurtir</a></td>
+                                    <td><a href="avaliarItem.html?idItem=${item.id}&aval=positiva" class="btn btn-success"><i class="far fa-thumbs-up"></i></a></td>
+                                    <td><a href="avaliarItem.html?idItem=${item.id}&aval=negativa" class="btn btn-danger"><i class="far fa-thumbs-down"></i></a></td>
                                 </c:when>
                                 <c:otherwise>
                                     <td colspan="2">Você já avaliou este item</td>
@@ -66,7 +80,7 @@
             </c:forEach>
         </tbody>
     </table>
-
+    </div>
 
 </body>
 </html>

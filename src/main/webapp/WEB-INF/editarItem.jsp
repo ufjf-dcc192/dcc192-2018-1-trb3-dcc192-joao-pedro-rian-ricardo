@@ -1,19 +1,20 @@
 
 <%@include file="jspf/cabecalho.jspf" %>
-<title>Crie um novo item</title>
+<title>Editar o item</title>
 </head>
 <body>
     <br/>
-<center><h3>Insira abaixo os dados solicitados para a criação de um novo Item</h3></center>
+<center><h3>Edite abaixo os dados do Item</h3></center>
 
 <div class="container-fluid col-lg-6">
     <form method="post">
         <div class="form-group">
+            <input type="hidden" value="${item.id}" name="idItem"/>
             <label>Título do Item:</label>
-            <input class="form-control" type="text" placeholder="Insira aqui o título do item a ser discutido" name="titulo"/><br/>
+            <input class="form-control" type="text" placeholder="Insira aqui o título do item a ser discutido" name="titulo" value="${item.titulo}"/><br/>
 
             <label>Descrição do Item:</label>
-            <input class="form-control" type="text" placeholder="Insira aqui uma pequena descrição sobre o item a ser discutido" name="descricao"/><br/>
+            <input class="form-control" type="text" placeholder="Insira aqui uma pequena descrição sobre o item a ser discutido" name="descricao" value="${item.descricao}"/><br/>
             <label>Informe o link e clique em adicionar:</label>
             <div class="input-group">
                 <input class="form-control" type="text" placeholder="Insira aqui o link a ser vinculado ao item" id="link"/><br/>
@@ -24,6 +25,9 @@
             </div>
             <label>Links</label>
             <select class="form-control" multiple="multiple" name="links" id="links">
+                <c:forEach var="link" items="${item.links}">
+                    <option value="${link.link}">${link.link}</option>
+                </c:forEach>
             </select>
             <br/>
 
@@ -61,7 +65,6 @@
     $("#enviar").click(function () {
         $("#links option").each(function () {
             $(this).prop('selected', true);
-            alert($(this).val());
         }
         );
 
