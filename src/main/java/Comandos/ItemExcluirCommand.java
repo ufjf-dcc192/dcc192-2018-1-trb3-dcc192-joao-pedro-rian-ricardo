@@ -21,9 +21,8 @@ public class ItemExcluirCommand implements Comando {
             int idItem = Integer.parseInt(request.getParameter("idItem"));
             ItemDAO.getInstance().excluirItem(idItem);
             request.setAttribute("excluido", true);
-            RequestDispatcher despachante = request.getRequestDispatcher("/WEB-INF/itens.jsp");
-            despachante.forward(request, response);
-        } catch (ServletException | IOException ex) {
+            response.sendRedirect("item-listar.html?excluido=true");
+        } catch (IOException ex) {
             Logger.getLogger(ItemExcluirCommand.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

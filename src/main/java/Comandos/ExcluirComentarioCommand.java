@@ -14,17 +14,16 @@ import javax.servlet.http.HttpServletResponse;
  * @author Pedro
  */
 public class ExcluirComentarioCommand implements Comando {
+
     @Override
     public void exec(HttpServletRequest request, HttpServletResponse response) {
         try {
             int idComent = Integer.parseInt(request.getParameter("idComent"));
             ComentarioDAO.getInstance().excluirComentario(idComent);
-            request.setAttribute("excluido", true);
-            RequestDispatcher despachante = request.getRequestDispatcher("/WEB-INF/meusComentarios.jsp");
-            despachante.forward(request, response);
-        } catch (ServletException | IOException ex) {
+            response.sendRedirect("meusComentarios.html?excluido=true");
+        } catch (IOException ex) {
             Logger.getLogger(ItemExcluirCommand.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    
 }
