@@ -66,7 +66,7 @@ public class ItemDAO {
             ResultSet resultado = comando.executeQuery();
             if (resultado.next()) {
                 do {
-                    links.add(new Link(resultado.getInt(1), resultado.getString(2), item));
+                    links.add(new Link(resultado.getInt(1), resultado.getString(3), item));
                 } while (resultado.next());
             }
         } catch (SQLException ex) {
@@ -145,24 +145,59 @@ public class ItemDAO {
                 + "WHERE \n"
                 + "  id = ?\n"
                 + ";";
+        try (PreparedStatement comando = conexao.prepareStatement(sql)) {
+            comando.setString(1, item.getTitulo());
+            comando.setString(2, item.getDescricao());
+            comando.setInt(3, item.getId());
+            comando.execute();
+            comando.close();
+            this.editarLinks(item);
+        } catch (SQLException ex) {
+            Logger.getLogger(ItemDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void editarLinks(Item item) {
+        this.excluirLinks(item.getId());
+        this.adicionarLinks(item.getId(), item.getLinks());
     }
 
     public void excluirItem(Integer id) {
         try {
-            String sql = "DELETE * FROM item WHERE id = ?";
-            PreparedStatement comando = conexao.prepareStatement(sql);
-            comando.setInt(1,id);
-            comando.execute();
-            comando.close();
+            this.excluirLinks(id);
+            this.excluirAvaliacoes(id);
+            String sql = "DELETE FROM item WHERE id = ?";
+            try (PreparedStatement comando = conexao.prepareStatement(sql)) {
+                comando.setInt(1, id);
+                comando.execute();
+            }
         } catch (SQLException ex) {
             Logger.getLogger(ItemDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     public void excluirLinks(Integer id) {
+        try {
+            String sql = "DELETE FROM link WHERE id_item = ?";
+            try (PreparedStatement comando = conexao.prepareStatement(sql)) {
+                comando.setInt(1, id);
+                comando.execute();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ItemDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void excluirAvaliacoes(Integer id) {
+        try {
+            String sql = "DELETE FROM avaliacao_item WHERE id_item = ?";
+            try (PreparedStatement comando = conexao.prepareStatement(sql)) {
+                comando.setInt(1, id);
+                comando.execute();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ItemDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public List<Item> aAvaliar(Integer idUsuario) {
@@ -214,13 +249,15 @@ public class ItemDAO {
     }
 
     public List<Item> getItensOrdenados(Integer ordenacao) {
-        String sql = "SELECT item.id,item.data_criacao,item.data_atualizacao,\n"
-                + "       SUM(AI.POSITIVA - AI.NEGATIVA) AS AVALIACAOFINAL,\n"
-                + "       sum(ai.positiva + ai.negativa) as totalAvaliacao\n"
+        String sql = "SELECT item.id,\n"
+                + "      item.data_criacao,\n"
+                + "      item.data_atualizacao,\n"
+                + "      COALESCE(sum(AI.POSITIVA - AI.NEGATIVA), 0) as avaliacaofinal,\n"
+                + "      COALESCE(sum(ai.positiva + ai.negativa), 0) as totalavaliacao\n"
                 + "FROM ITEM\n"
-                + "     INNER JOIN AVALIACAO_ITEM AI ON (ITEM.ID = AI.ID_ITEM)\n"
-                + " group by 1\n"
-                + " order by ?";
+                + "    LEFT JOIN AVALIACAO_ITEM AI ON (ITEM.ID = AI.ID_ITEM)\n"
+                + "group by 1\n"
+                + "order by ?;";
         List<Item> itens = new ArrayList<>();
         try (PreparedStatement comando = conexao.prepareStatement(sql)) {
             comando.setInt(1, ordenacao);
@@ -301,8 +338,8 @@ public class ItemDAO {
             if (resultado.next()) {
                 do {
                     Item item = this.getItemById(resultado.getInt(1));
-                    item.setComentado(this.haComentario(usuario,item.getId()));
-                    item.setAvaliado(this.haAvaliacaoItem(usuario,item.getId()));
+                    item.setComentado(this.haComentario(usuario, item.getId()));
+                    item.setAvaliado(this.haAvaliacaoItem(usuario, item.getId()));
                     itens.add(item);
                 } while (resultado.next());
             }
@@ -327,7 +364,7 @@ public class ItemDAO {
         }
         return false;
     }
-    
+
     public boolean haAvaliacaoItem(Integer idUsuario, Integer idItem) {
         String sql = "SELECT * FROM AVALIACAO_ITEM WHERE ID_USUARIO = ? and ID_ITEM = ?";
         try (PreparedStatement comando = conexao.prepareStatement(sql)) {
@@ -342,6 +379,31 @@ public class ItemDAO {
         }
         return false;
     }
-    
 
+    public void adicionarAvaliacao(AvaliacaoItem av) {
+
+        String sql = "INSERT INTO \n"
+                + "  avaliacao_item\n"
+                + "(\n"
+                + "  id_usuario,\n"
+                + "  id_item,\n"
+                + "  positiva,\n"
+                + "  negativa\n"
+                + ")\n"
+                + "VALUES (\n"
+                + "  ?,\n"
+                + "  ?,\n"
+                + "  ?,\n"
+                + "  ?\n"
+                + ");";
+        try (PreparedStatement comando = conexao.prepareStatement(sql)) {
+            comando.setInt(1, av.getUsuario().getId());
+            comando.setInt(2, av.getItem().getId());
+            comando.setInt(3, av.getPositiva());
+            comando.setInt(4, av.getNegativa());
+            comando.execute();
+        } catch (SQLException ex) {
+            Logger.getLogger(ItemDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

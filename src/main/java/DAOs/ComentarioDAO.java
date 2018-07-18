@@ -138,7 +138,7 @@ public class ComentarioDAO {
                 do {
                     Item item = ItemDAO.getInstance().getItemById(resultado.getInt(3));
                     Usuario usuario = UsuarioDAO.getInstance().getUsuarioById(idUsuario);
-                    comentarios.add(new Comentario(resultado.getString(4), usuario, item));
+                    comentarios.add(new Comentario(resultado.getInt(1),resultado.getString(4), usuario, item));
                 } while (resultado.next());
             }
         } catch (SQLException ex) {
@@ -191,14 +191,29 @@ public class ComentarioDAO {
         }
         return false;
     }
-    
+
     public void excluirComentario(Integer id) {
         try {
-            String sql = "DELETE * FROM comentario WHERE id = ?";
-            PreparedStatement comando = conexao.prepareStatement(sql);
-            comando.setInt(1,id);
-            comando.execute();
-            comando.close();
+            this.excluirAvaliacao(id);
+            String sql = "DELETE FROM comentario WHERE id = ?";
+            try (PreparedStatement comando = conexao.prepareStatement(sql)) {
+                comando.setInt(1, id);
+                comando.execute();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ItemDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void excluirAvaliacao(Integer id) {
+
+        try {
+            String sql = "DELETE FROM AVALIACAO_COMENTARIO WHERE ID_COMENTARIO = ?";
+            try (PreparedStatement comando = conexao.prepareStatement(sql)) {
+                comando.setInt(1, id);
+                comando.execute();
+                comando.close();
+            }
         } catch (SQLException ex) {
             Logger.getLogger(ItemDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
