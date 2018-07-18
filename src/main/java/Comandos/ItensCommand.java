@@ -22,6 +22,21 @@ public class ItensCommand implements Comando {
 
         try {
             response.setContentType("text/html;charset=UTF-8");
+            if (request.getParameter("cadastrado") == null) {
+                request.setAttribute("cadastrado", false);
+            } else {
+                request.setAttribute("cadastrado", true);
+            }
+            if (request.getParameter("comentado") == null) {
+                request.setAttribute("comentado", false);
+            } else {
+                request.setAttribute("comentado", true);
+            }
+            if (request.getParameter("excluido") == null) {
+                request.setAttribute("excluido", false);
+            } else {
+                request.setAttribute("excluido", true);
+            }
             Integer idUsuario = (Integer) request.getSession().getAttribute("usuarioID");
             List<Item> itens = ItemDAO.getInstance().getAllItens(idUsuario);
             request.setAttribute("itens", itens);

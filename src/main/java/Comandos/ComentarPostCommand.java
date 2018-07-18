@@ -38,10 +38,8 @@ public class ComentarPostCommand implements Comando {
             ComentarioDAO daoC = ComentarioDAO.getInstance();
             Comentario comentario = new Comentario(descricao, usuario, item);
             daoC.adicionarComentario(comentario);
-            request.setAttribute("enviado", true);
-            RequestDispatcher despachante = request.getRequestDispatcher("/WEB-INF/comentar.jsp");
-            despachante.forward(request, response);
-        } catch (ServletException | IOException ex) {
+            response.sendRedirect("item-listar.html?comentado=true");
+        } catch (IOException ex) {
             Logger.getLogger(ComentarPostCommand.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

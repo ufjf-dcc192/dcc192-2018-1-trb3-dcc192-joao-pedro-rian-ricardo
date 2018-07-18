@@ -16,6 +16,7 @@ public class LoginPostCommand implements Comando {
     @Override
     public void exec(HttpServletRequest request, HttpServletResponse response) {
         try {
+            request.setCharacterEncoding("UTF-8");
             String user = request.getParameter("usuario");
             String senha = request.getParameter("senha");
             UsuarioDAO dao = UsuarioDAO.getInstance();

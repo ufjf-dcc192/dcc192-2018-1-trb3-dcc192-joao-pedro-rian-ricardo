@@ -27,7 +27,7 @@ public class IndexCommand implements Comando {
                 RequestDispatcher despachante = request.getRequestDispatcher("/WEB-INF/inicial.jsp");
                 despachante.forward(request, response);
             } else {
-                response.sendRedirect("login.html");
+                response.sendRedirect("index.html");
             }
         } catch (ServletException | IOException ex) {
             Logger.getLogger(IndexCommand.class.getName()).log(Level.SEVERE, null, ex);

@@ -27,6 +27,11 @@ public class UsuarioComentariosCommand implements Comando {
     @Override
     public void exec(HttpServletRequest request, HttpServletResponse response) {
         try {
+            if (request.getParameter("excluido") == null) {
+                request.setAttribute("excluido", false);
+            } else {
+                request.setAttribute("excluido", true);
+            }
             Integer idUsuario = (Integer) request.getSession().getAttribute("usuarioID");
             List<Comentario> comentarios = ComentarioDAO.getInstance().getComentariosByUsuario(idUsuario);
             Usuario usuario = UsuarioDAO.getInstance().getUsuarioById(idUsuario);

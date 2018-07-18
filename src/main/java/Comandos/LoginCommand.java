@@ -12,17 +12,21 @@ public class LoginCommand implements Comando {
 
     @Override
     public void exec(HttpServletRequest request, HttpServletResponse response) {
-       
 
         try {
             request.setAttribute("erroLogin", false);
+            if (request.getParameter("cadastro") == null) {
+                request.setAttribute("cadastro", false);
+            } else {
+                request.setAttribute("cadastro", true);
+            }
             RequestDispatcher despachante = request.getRequestDispatcher("/WEB-INF/login.jsp");
             despachante.forward(request, response);
-                  
+
         } catch (ServletException | IOException ex) {
             Logger.getLogger(LoginCommand.class.getName()).log(Level.SEVERE, null, ex);
         }
-       
+
     }
 
 }
