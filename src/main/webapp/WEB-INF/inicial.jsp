@@ -6,10 +6,7 @@
     <br/>
     <div class="container-fluid">
         <div class="row">
-            <div class="col col-lg-3"> 
-                Informações do usuário:<br/>
-                Login:${usuario.login}<br/>
-                Email:${usuario.email}<br/>     
+            <div class="col col-lg-3">     
             </div>
             <div class="col col-lg-6">
                 <h4>Bem-Vindo ${usuario.nome}<br/></h4>

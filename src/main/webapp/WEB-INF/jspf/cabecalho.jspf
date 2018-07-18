@@ -21,9 +21,6 @@
                     <a class="nav-link" href="item-listar.html">Itens</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Perfil</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link" href="meusComentarios.html">Meus Comentários</a>
                 </li>
 
