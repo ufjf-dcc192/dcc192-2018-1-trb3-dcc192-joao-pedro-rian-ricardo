@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet(name = "ItemServlet", urlPatterns = {"/item-listar.html","/item-novo.html","/item-editar.html","/item-excluir.html","/item.html","/a-avaliar.html"})
+@WebServlet(name = "ItemServlet", urlPatterns = {"/item-listar.html", "/item-novo.html", "/item-editar.html", "/item-excluir.html", "/item.html", "/a-avaliar.html"})
 public class ItemServlet extends HttpServlet {
 
     @Override
@@ -36,7 +36,7 @@ public class ItemServlet extends HttpServlet {
 
             comando.exec(request, response);
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
-            Logger.getLogger(ItemServlet.class.getName()).log(Level.SEVERE, null, ex);
+            response.sendRedirect("index.html");
         }
 
     }
@@ -47,14 +47,14 @@ public class ItemServlet extends HttpServlet {
         try {
             Map<String, String> rotas;
             rotas = new HashMap<>();
-            rotas.put("/item-novo.html", "Comandos.ItemNovoPostCommand");         
+            rotas.put("/item-novo.html", "Comandos.ItemNovoPostCommand");
             rotas.put("/item-editar.html", "Comandos.ItemEditarPostCommand");
             String clazzName = rotas.get(request.getServletPath());
-            
+
             Comando comando = null;
-            
+
             comando = (Comando) Class.forName(clazzName).newInstance();
-            
+
             comando.exec(request, response);
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
             Logger.getLogger(ItemServlet.class.getName()).log(Level.SEVERE, null, ex);

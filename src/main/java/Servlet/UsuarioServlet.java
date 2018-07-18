@@ -12,12 +12,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet(name = "UsuarioServlet", urlPatterns = {"/curadores.html","/trolls.html"})
+@WebServlet(name = "UsuarioServlet", urlPatterns = {"/curadores.html", "/trolls.html"})
 public class UsuarioServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
+        if (request.getSession().getAttribute("usuarioID") == null) {
+            response.sendRedirect("index.html");
+        }
         try {
             Map<String, String> rotas;
             rotas = new HashMap<>();
@@ -32,7 +35,7 @@ public class UsuarioServlet extends HttpServlet {
 
             comando.exec(request, response);
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
-            Logger.getLogger(UsuarioServlet.class.getName()).log(Level.SEVERE, null, ex);
+            response.sendRedirect("index.html");
         }
 
     }
@@ -43,13 +46,13 @@ public class UsuarioServlet extends HttpServlet {
         try {
             Map<String, String> rotas;
             rotas = new HashMap<>();
-            
+
             String clazzName = rotas.get(request.getServletPath());
-            
+
             Comando comando = null;
-            
+
             comando = (Comando) Class.forName(clazzName).newInstance();
-            
+
             comando.exec(request, response);
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
             Logger.getLogger(UsuarioServlet.class.getName()).log(Level.SEVERE, null, ex);

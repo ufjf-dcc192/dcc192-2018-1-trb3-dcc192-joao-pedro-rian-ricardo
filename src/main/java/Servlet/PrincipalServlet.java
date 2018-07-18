@@ -34,7 +34,7 @@ public class PrincipalServlet extends HttpServlet {
 
             comando.exec(request, response);
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
-            Logger.getLogger(PrincipalServlet.class.getName()).log(Level.SEVERE, null, ex);
+            response.sendRedirect("index.html");
         }
 
     }
