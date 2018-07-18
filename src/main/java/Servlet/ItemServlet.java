@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet(name = "ItemServlet", urlPatterns = {"/item-listar.html", "/item-novo.html", "/item-editar.html", "/item-excluir.html", "/item.html", "/a-avaliar.html"})
+@WebServlet(name = "ItemServlet", urlPatterns = {"/item-listar.html", "/item-novo.html", "/item-editar.html", "/item-excluir.html", "/item.html", "/a-avaliar.html","/avaliarItem.html"})
 public class ItemServlet extends HttpServlet {
 
     @Override
@@ -27,6 +27,7 @@ public class ItemServlet extends HttpServlet {
             rotas.put("/item-excluir.html", "Comandos.ItemExcluirCommand");
             rotas.put("/item.html", "Comandos.ItemDetalhesCommand");
             rotas.put("/a-avaliar.html", "Comandos.AvaliarCommand");
+            rotas.put("/avaliarItem.html", "Comandos.AvaliarItemCommand");
 
             String clazzName = rotas.get(request.getServletPath());
 

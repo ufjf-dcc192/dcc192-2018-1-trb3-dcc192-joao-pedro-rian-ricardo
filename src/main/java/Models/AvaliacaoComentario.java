@@ -9,6 +9,14 @@ public class AvaliacaoComentario {
     private Usuario usuario;
     private Comentario comentario;
 
+    public AvaliacaoComentario(Integer positiva, Integer negativa, Usuario usuario, Comentario comentario) {
+        this.positiva = positiva;
+        this.negativa = negativa;
+        this.usuario = usuario;
+        this.comentario = comentario;
+    }
+    
+    
     public AvaliacaoComentario() {
     }
 

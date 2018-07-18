@@ -218,4 +218,30 @@ public class ComentarioDAO {
             Logger.getLogger(ItemDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+    public void adicionarAvaliacao(AvaliacaoComentario av) {
+        String sql = "INSERT INTO \n"
+                + "  avaliacao_comentario\n"
+                + "(\n"
+                + "  id_usuario,\n"
+                + "  id_comentario,\n"
+                + "  positiva,\n"
+                + "  negativa\n"
+                + ")\n"
+                + "VALUES (\n"
+                + "  ?,\n"
+                + "  ?,\n"
+                + "  ?,\n"
+                + "  ?\n"
+                + ");";
+        try (PreparedStatement comando = conexao.prepareStatement(sql)) {
+            comando.setInt(1, av.getUsuario().getId());
+            comando.setInt(2, av.getComentario().getId());
+            comando.setInt(3, av.getPositiva());
+            comando.setInt(4, av.getNegativa());
+            comando.execute();
+        } catch (SQLException ex) {
+            Logger.getLogger(ItemDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

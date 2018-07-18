@@ -21,8 +21,8 @@
                     <td>${comentario.comentario}</td>
                     <c:choose>
                         <c:when test="${not comentario.avaliado}">
-                            <td><a href="avaliarComentario.html?idComentario=${comentario.id}&aval=positiva">Curtir</a></td>
-                            <td><a href="avaliarComentario.html?idComentario=${comentario.id}&aval=negativa">Descurtir</a></td>
+                            <td><a href="avaliarComentario.html?idComentario=${comentario.id}&aval=positiva" class="btn btn-success"><i class="far fa-thumbs-up"></i> Curtir</a></td>
+                            <td><a href="avaliarComentario.html?idComentario=${comentario.id}&aval=negativa" class="btn btn-danger"><i class="far fa-thumbs-down"></i> Descurtir</a></td>
                         </c:when>
                         <c:otherwise>
                             <td colspan="2">Você já avaliou este comentário</td>
