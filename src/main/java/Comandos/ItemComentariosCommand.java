@@ -24,6 +24,7 @@ public class ItemComentariosCommand implements Comando {
             Integer idUsuario = (Integer) request.getSession().getAttribute("usuarioID");
             List<Comentario> comentarios = ComentarioDAO.getInstance().getComentariobyItem(item,idUsuario);
             request.setAttribute("comentarios", comentarios);
+            request.setAttribute("item", item);
             RequestDispatcher despachante = request.getRequestDispatcher("/WEB-INF/itemComentarios.jsp");
             despachante.forward(request, response);
         } catch (ServletException | IOException ex) {
