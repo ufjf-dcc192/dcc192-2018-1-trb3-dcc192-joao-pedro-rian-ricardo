@@ -18,6 +18,7 @@ public class ItemDAO {
 
     private static Connection conexao;
     private static ItemDAO dao;
+    private final String SQL_SELECT_ITENS_FROM_CATEGORIA = "select id_item from item_categoria where id_categoria = ?";
 
     public ItemDAO() throws SQLException, ClassNotFoundException {
         ItemDAO.conexao = Conexao.getConexao();
@@ -405,5 +406,18 @@ public class ItemDAO {
         } catch (SQLException ex) {
             Logger.getLogger(ItemDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public List<Item> getItensByCategoria(Integer id_categoria) throws SQLException {
+        List<Item> itens = new ArrayList<>();
+        try (PreparedStatement comando = conexao.prepareStatement(SQL_SELECT_ITENS_FROM_CATEGORIA)) {
+            ResultSet resultado = comando.executeQuery();
+            if (resultado.next()) {
+                do {
+                    itens.add(ItemDAO.getInstance().getItemById(resultado.getInt("id_item")));
+                } while (resultado.next());
+            }
+        }
+        return itens;
     }
 }
