@@ -26,7 +26,7 @@ public class ItemServlet extends HttpServlet {
             rotas.put("/item-editar.html", "Comandos.ItemEditarCommand");
             rotas.put("/item-excluir.html", "Comandos.ItemExcluirCommand");
             rotas.put("/item.html", "Comandos.ItemDetalhesCommand");
-            rotas.put("/a-avaliar.html", "Comandos.AvaliarCommand");
+            rotas.put("/a-avaliar.html", "Comandos.UsuarioAvaliarCommand");
             rotas.put("/avaliarItem.html", "Comandos.AvaliarItemCommand");
 
             String clazzName = rotas.get(request.getServletPath());

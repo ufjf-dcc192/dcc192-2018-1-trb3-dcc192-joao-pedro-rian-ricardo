@@ -4,32 +4,42 @@
     Author     : Pedro
 --%>
 <%@include file="jspf/cabecalho.jspf" %>
-<title>Coment·rios do Item</title>
+<title>Coment√°rios do Item</title>
 </head>
 <body>
-    <h4 class="text-center">Veja todos os coment·rios do item ${item.titulo} abaixo:</h4>
+    <h4 class="text-center">Veja todos os coment√°rios do item ${item.titulo} abaixo:</h4>
     <table class="table table-striped">
         <thead>
             <tr class="text-center">
-                <th>Coment·rios</th>
-                <th colspan="2">OpÁıes</th>
+                <th>Coment√°rios</th>
+                <th colspan="2">Op√ß√µes</th>
             </tr>
         </thead>
         <tbody>
             <c:forEach var="comentario" items="${comentarios}">
+			 <c:choose>
+                    <c:when test="${comentario.usuario.id == sessionScope.usuarioID}">
+                        <tr class="text-center">
+                            <td>${comentario.comentario}</td>
+                            <td colspan="2"><a href="excluirComentario.html?idComent=${comentario.id}" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Excluir</a></td>
+                        </tr>
+                    </c:when>
+                    <c:otherwise>
                 <tr class="text-center">
                     <td>${comentario.comentario}</td>
                     <c:choose>
                         <c:when test="${not comentario.avaliado}">
-                            <td><a href="avaliarComentario.html?idComentario=${comentario.id}&aval=positiva" class="btn btn-success"><i class="far fa-thumbs-up"></i> Curtir</a></td>
-                            <td><a href="avaliarComentario.html?idComentario=${comentario.id}&aval=negativa" class="btn btn-danger"><i class="far fa-thumbs-down"></i> Descurtir</a></td>
+                            <td><a href="avaliarComentario.html?idComentario=${comentario.id}&idItem=${item.id}&aval=positiva" class="btn btn-success"><i class="far fa-thumbs-up"></i> Curtir</a></td>
+                            <td><a href="avaliarComentario.html?idComentario=${comentario.id}&idItem=${item.id}&aval=negativa" class="btn btn-danger"><i class="far fa-thumbs-down"></i> Descurtir</a></td>
                         </c:when>
                         <c:otherwise>
-                            <td colspan="2">VocÍ j· avaliou este coment·rio</td>
+                            <td colspan="2">Voc√™ j√° avaliou este coment√°rio</td>
                         </c:otherwise>
                     </c:choose>
 
                 </tr>
+				</c:otherwise>
+				</c:choose>
             </c:forEach>
         </tbody>
     </table>

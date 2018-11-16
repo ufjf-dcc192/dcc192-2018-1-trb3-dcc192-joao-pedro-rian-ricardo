@@ -32,7 +32,8 @@ public class AvaliarComentarioCommand implements Comando {
             Comentario comentario = ComentarioDAO.getInstance().getComentarioById(idComent);
             AvaliacaoComentario av = new AvaliacaoComentario(positiva, negativa, usuario, comentario);
             ComentarioDAO.getInstance().adicionarAvaliacao(av);
-            response.sendRedirect("itemComentarios.html");
+            int id = Integer.parseInt(request.getParameter("idItem"));
+            response.sendRedirect("itemComentarios.html?idItem="+id);
         } catch (IOException ex) {
             Logger.getLogger(AvaliarItemCommand.class.getName()).log(Level.SEVERE, null, ex);
         }

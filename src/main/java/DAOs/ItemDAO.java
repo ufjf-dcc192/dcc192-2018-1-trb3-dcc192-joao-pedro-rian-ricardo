@@ -210,11 +210,12 @@ public class ItemDAO {
                 + "           	SELECT ID_ITEM\n"
                 + "  	         FROM AVALIACAO_ITEM\n"
                 + "           	WHERE ID_USUARIO = ?\n"
-                + "  	)";
+                + "  	) AND id_usuario <> ?";
         List<Item> itens = new ArrayList<>();
         try (PreparedStatement comando = conexao.prepareStatement(sql)) {
             comando.setInt(1, idUsuario);
             comando.setInt(2, idUsuario);
+            comando.setInt(3, idUsuario);
             ResultSet resultado = comando.executeQuery();
             if (resultado.next()) {
                 do {
