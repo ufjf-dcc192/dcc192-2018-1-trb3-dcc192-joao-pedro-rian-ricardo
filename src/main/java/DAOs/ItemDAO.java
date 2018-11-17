@@ -93,7 +93,7 @@ public class ItemDAO {
         return avaliacoes;
     }
 
-    public void adicionarItem(Item item) {
+    public void adicionarItem(Item item, String[] categorias) {
         String sql = "INSERT INTO \n"
                 + "  public.item\n"
                 + "(\n"
@@ -122,6 +122,7 @@ public class ItemDAO {
             }
             comando.close();
             this.adicionarLinks(idItem, item.getLinks());
+            this.adicionarCategorias(idItem, categorias);
         } catch (SQLException ex) {
             Logger.getLogger(ItemDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -133,6 +134,15 @@ public class ItemDAO {
             links.forEach((link) -> {
                 this.adicionarLink(id, link);
             });
+        }
+    }
+
+    private void adicionarCategorias(Integer idItem, String[] categorias) {
+        if (categorias.length > 0) {
+            for (String categoria : categorias) {
+                this.adicionarCategoria(idItem, Integer.parseInt(categoria));
+            }
+            
         }
     }
 
@@ -243,6 +253,27 @@ public class ItemDAO {
         try (PreparedStatement comando = conexao.prepareStatement(sql)) {
             comando.setInt(1, id);
             comando.setString(2, link.getLink());
+            comando.execute();
+            comando.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(ItemDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void adicionarCategoria(Integer id, Integer id_categoria) {
+        String sql = "INSERT INTO \n"
+                + "  item_categoria\n"
+                + "(\n"
+                + "  id_item,\n"
+                + "  id_categoria\n"
+                + ")\n"
+                + "VALUES (\n"
+                + "  ?,\n"
+                + "  ?\n"
+                + ");";
+        try (PreparedStatement comando = conexao.prepareStatement(sql)) {
+            comando.setInt(1, id);
+            comando.setInt(2, id_categoria);
             comando.execute();
             comando.close();
         } catch (SQLException ex) {
@@ -421,4 +452,5 @@ public class ItemDAO {
         }
         return itens;
     }
+
 }

@@ -1,5 +1,5 @@
-<%@include file="jspf/cabecalho.jspf" %>
-<title>Lista de Itens</title>
+<%@include file="jspf/cabecalhoCategoria.jspf" %>
+<title>Lista de Tags</title>
 </head>
 <body>
     <c:if test="${alterado == true}">
@@ -16,7 +16,7 @@
     <h2 class="text-center text-success">Veja as hashtags cadastradas no sistema</h2>
     <br>
     <div class="container-fluid">
-        <table class="table table-striped table-responsive">
+        <table class="table table-striped">
             <thead class="text-center">
                 <tr>
                     <th>Id</th>
@@ -30,7 +30,7 @@
                     <tr class="text-center">
                         <td>${categoria.id}</td>
                         <td>${categoria.categoria}</td>
-                        <td><a href="editarCategoria.html?idCategoria=${categoria.id}" class="btn btn-primary"><i class="fas fa-info-circle"></i>Editar</a></td>
+                        <td><a href="editarCategoria.html?idCategoria=${categoria.id}" class="btn btn-primary"><i class="fas fa-pen"></i> Editar</a></td>
                     </tr>
                     </c:forEach>
             </tbody>

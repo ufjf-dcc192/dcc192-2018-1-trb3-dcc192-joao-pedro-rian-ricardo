@@ -6,7 +6,6 @@
 package DAOs;
 
 import Models.Categoria;
-import Models.Item;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -22,7 +21,7 @@ public class CategoriaDAO {
     private static CategoriaDAO dao;
     private final String SQL_INSERT_CATEGORIA = "INSERT INTO CATEGORIA(categoria) VALUES (?)";
     private final String SQL_ALL_CATEGORIA = "SELECT ID_CATEGORIA FROM CATEGORIA";
-    private final String SQL_CATEGORIA_BY_ID = "SELECT * FROM CATEGORIA WHERE ID = ?";
+    private final String SQL_CATEGORIA_BY_ID = "SELECT * FROM CATEGORIA WHERE ID_CATEGORIA = ?";
     private final String SQL_UPDATE_CATEGORIA = "UPDATE CATEGORIA SET CATEGORIA = ? WHERE ID_CATEGORIA = ?";
 
     private CategoriaDAO() throws SQLException, ClassNotFoundException {
@@ -77,7 +76,7 @@ public class CategoriaDAO {
             comando.setInt(1, id);
             ResultSet resultado = comando.executeQuery();
             if (resultado.next()) {
-                categoria = new Categoria().setId(resultado.getInt("id_categoria")).setCategoria("categoria");
+                categoria = new Categoria().setId(resultado.getInt("id_categoria")).setCategoria(resultado.getString("categoria"));
             }
             comando.close();
         }

@@ -16,7 +16,7 @@
             <form method="post">
                 <div class="form-group">
                     <label>Categoria:</label>
-                    <input class="form-control" required="required" type="text" placeholder="Insira aqui a hashtag" name="hashtag"/><br/>
+                    <input class="form-control" required="required" type="text" placeholder="Insira aqui a hashtag" name="categoria"/><br/>
                 </div>
                 <input type="submit" class="btn btn-success"/>
                 <input type="reset" class="btn btn-danger"/>

@@ -15,10 +15,10 @@ public class EditarCategoriaPostCommand implements Comando {
     public void exec(HttpServletRequest request, HttpServletResponse response) {
         try {
             request.setCharacterEncoding("UTF-8");
-            Integer id = Integer.parseInt(request.getParameter("id"));
+            Integer id = Integer.parseInt(request.getParameter("idCategoria"));
             String descricao = request.getParameter("categoria");
             CategoriaDAO dao = CategoriaDAO.getInstance();
-            Categoria categoria = new Categoria().setCategoria(descricao);
+            Categoria categoria = new Categoria().setCategoria(descricao).setId(id);
             dao.editar(categoria);
             response.sendRedirect("categorias.html?alterado=true");
         } catch (IOException ex) {

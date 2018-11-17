@@ -1,6 +1,8 @@
 package Comandos;
 
+import DAOs.CategoriaDAO;
 import DAOs.UsuarioDAO;
+import Models.Categoria;
 import Models.Usuario;
 import com.google.gson.Gson;
 import java.io.IOException;
@@ -23,10 +25,14 @@ public class ItemNovoCommand implements Comando {
             Integer idUsuario = (Integer) request.getSession().getAttribute("usuarioID");
             UsuarioDAO dao = UsuarioDAO.getInstance();
             Usuario usuario = dao.getUsuarioById(idUsuario);
+            List<Categoria> categorias = CategoriaDAO.getInstance().getAllCategorias();
             request.setAttribute("usuario", usuario);
+            request.setAttribute("categorias", categorias);
             RequestDispatcher despachante = request.getRequestDispatcher("/WEB-INF/novoItem.jsp");
             despachante.forward(request, response);
         } catch (ServletException | IOException ex) {
+            Logger.getLogger(ItemNovoCommand.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
             Logger.getLogger(ItemNovoCommand.class.getName()).log(Level.SEVERE, null, ex);
         }
 

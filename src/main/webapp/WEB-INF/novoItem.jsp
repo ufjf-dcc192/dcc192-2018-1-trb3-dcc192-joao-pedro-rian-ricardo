@@ -14,6 +14,21 @@
 
             <label>Descrição do Item:</label>
             <input class="form-control" type="text" placeholder="Insira aqui uma pequena descrição sobre o item a ser discutido" name="descricao"/><br/>
+            <label>Informe a tag e clique em adicionar:</label>
+            <div class="input-group">
+                <select class="form-control" id="categorias">
+                    <c:forEach var="categoria" items="${categorias}">
+                        <option value="${categoria.id}">${categoria.categoria}</option>
+                    </c:forEach>
+                </select> <span class="input-group-btn">
+                    <button class="btn btn-primary" type="button" id="addTag" onclick="MoveListBoxItem('categorias','tags')">Adicionar</button>
+                    <button class="btn btn-warning" type="button" id="removeTag" onclick="MoveListBoxItem('tags','categorias')">Remover</button>
+                </span>
+            </div>
+            <label>Tags</label>
+            <select class="form-control" multiple="multiple" name="tags" id="tags">
+            </select>
+            <br/>
             <label>Informe o link e clique em adicionar:</label>
             <div class="input-group">
                 <input class="form-control" type="text" placeholder="Insira aqui o link a ser vinculado ao item" id="link"/><br/>
@@ -58,6 +73,17 @@
         $('#link').focus();
 
     });
+
+    function MoveListBoxItem(leftListBoxID, rightListBoxID, isMoveAll) {
+        if (isMoveAll === true) {
+
+            $('#' + leftListBoxID + ' option').remove().appendTo('#' + rightListBoxID).removeAttr('selected');
+
+        } else {
+
+            $('#' + leftListBoxID + ' option:selected').remove().appendTo('#' + rightListBoxID).removeAttr('selected');
+        }
+    }
     $("#enviar").click(function () {
         $("#links option").each(function () {
             $(this).prop('selected', true);
@@ -65,6 +91,12 @@
         );
 
         $("#links").prop('required', true);
+        $("#tags option").each(function () {
+            $(this).prop('selected', true);
+        }
+        );
+
+        $("#tags").prop('required', true);
     });
 </script>
 <%@include file="jspf/rodape.jspf" %>

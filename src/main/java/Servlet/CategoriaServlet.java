@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Pedro
  */
-@WebServlet(name = "CategoriaServlet", urlPatterns = {"/categorias.html", "/editarCategoria.html", "/novaCategoria.html", "/sessionHashtags.html"})
+@WebServlet(name = "CategoriaServlet", urlPatterns = {"/categorias.html", "/editarCategoria.html", "/novaCategoria.html", "/sessionTags.html"})
 public class CategoriaServlet extends HttpServlet {
 
     @Override
@@ -35,7 +35,7 @@ public class CategoriaServlet extends HttpServlet {
             rotas.put("/categorias.html", "Comandos.CategoriasCommand");
             rotas.put("/editarCategoria.html", "Comandos.EditarCategoriaCommand");
             rotas.put("/novaCategoria.html", "Comandos.RegistroCategoriaCommand");
-            rotas.put("/sessionHashtags.html", "Comandos.SessionHashtagCommand");
+            rotas.put("/sessionTags.html", "Comandos.SessionTagsCommand");
 
             String clazzName = rotas.get(request.getServletPath());
 
@@ -57,7 +57,7 @@ public class CategoriaServlet extends HttpServlet {
             rotas = new HashMap<>();
             rotas.put("/novaCategoria.html", "Comandos.RegistroCategoriaPostCommand");
             rotas.put("/editarCategoria.html", "Comandos.EditarCategoriaPostCommand");
-            rotas.put("/sessionHashtags.html", "Comandos.SessionHashtagPostCommand");
+            rotas.put("/sessionTags.html", "Comandos.SessionTagsPostCommand");
             String clazzName = rotas.get(request.getServletPath());
 
             Comando comando;
