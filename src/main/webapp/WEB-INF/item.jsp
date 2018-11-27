@@ -2,7 +2,19 @@
 <title>Comentários do Item</title>
 </head>
 <body>
-    <h3 class="text-center text-danger">Veja todos os detalhes do item ${item.titulo} abaixo:</h3>
+    <h2 class="text-center text-danger"> Detalhes do trabalho</h2><br/>
+    <h3 class="text-center text-danger">${item.titulo}</h3><br/>
+    
+    <div class="row">
+  <div class="col-9"><h3 class="text-center text-danger">${item.titulo}</h3><br/></div>
+  <div class="col-4"><h4>Descrição</h4><br/>${item.descricao}<br/></div>
+  <div class="col-6">
+      <h4>${item.usuario.nome}</h4><br/>
+      Data de criação : ${item.getStringDataCriacao()}<br/> 
+      Data de atualização:${item.getStringDataAtu()}<br/>
+      ${item.avaliacaofinal}<br/>
+  </div>
+</div>
     <table class="table table-striped">
         <thead class="text-center">
             <tr>
