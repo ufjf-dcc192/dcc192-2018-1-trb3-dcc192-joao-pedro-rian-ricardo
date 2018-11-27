@@ -9,16 +9,17 @@
             <div class="col col-lg-3">     
             </div>
             <div class="col col-lg-6">
-                <h4>Bem-Vindo ${usuario.nome}<br/></h4>
+                <h4>Bem-Vindo, ${usuario.nome}<br/></h4>
                 <a href="item-novo.html" class="btn btn-primary">Criar Item de Discussão</a>
                 <br/>
                 <br/>
             </div>
         </div>
         <div class="row">
-            <div class="col col-lg-3"></div>
-            <div class="col col col-lg-6"><img src="icones/curadoria.png" width="800" height="270"></div>
-            <div class="col"></div>
+                <h4>Veja as categorias e seus respectivos itens:<br/></h4>
+                <c:forEach var="categoria" items="categorias">
+                        Categoria: ${categoria}
+                </c:forEach>
         </div>
     </div>
     <br/>

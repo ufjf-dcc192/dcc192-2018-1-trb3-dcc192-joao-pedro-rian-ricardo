@@ -3,14 +3,13 @@
 </head>
 <body>
     <h3 class="text-center text-danger">Veja todos os detalhes do item ${item.titulo} abaixo:</h3>
-    <table class="table table-striped">
+    <table class="table">
         <thead class="text-center">
             <tr>
                 <th>Descrição</th>
                 <th>Data de criação</th>
                 <th>Data de atualização</th>
-                <th>Criador</th>
-                <th>Avaliação Final do Item</th>
+                <th>Criador</th>                
             </tr>
         </thead>
         <tbody>
@@ -19,7 +18,9 @@
                     <td>${item.getStringDataCriacao()}</td> 
                     <td>${item.getStringDataAtu()}</td>
                     <td>${item.usuario.nome}</td>
-                    <td>${item.avaliacaofinal}</td>
+                </tr>
+                <tr>
+                    <td colspan="4">Avaliação Final do Item: ${item.avaliacaofinal}</td>
                 </tr>
         </tbody>
     </table>

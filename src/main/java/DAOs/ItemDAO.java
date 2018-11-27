@@ -443,6 +443,7 @@ public class ItemDAO {
     public List<Item> getItensByCategoria(Integer id_categoria) throws SQLException {
         List<Item> itens = new ArrayList<>();
         try (PreparedStatement comando = conexao.prepareStatement(SQL_SELECT_ITENS_FROM_CATEGORIA)) {
+            comando.setInt(1, id_categoria);
             ResultSet resultado = comando.executeQuery();
             if (resultado.next()) {
                 do {
