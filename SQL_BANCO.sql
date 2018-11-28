@@ -1,0 +1,3170 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 9.6.9
+-- Dumped by pg_dump version 9.6.0
+
+-- Started on 2018-11-27 21:58:54
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 2234 (class 1262 OID 17092)
+-- Name: curadoria; Type: DATABASE; Schema: -; Owner: postgres
+--
+
+CREATE DATABASE curadoria WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'Portuguese_Brazil.1252' LC_CTYPE = 'Portuguese_Brazil.1252';
+
+
+ALTER DATABASE curadoria OWNER TO postgres;
+
+\connect curadoria
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 1 (class 3079 OID 12387)
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- TOC entry 2236 (class 0 OID 0)
+-- Dependencies: 1
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+SET search_path = public, pg_catalog;
+
+--
+-- TOC entry 203 (class 1255 OID 17093)
+-- Name: links(integer); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION links(iditem integer) RETURNS TABLE(id_link integer, item integer, link character varying)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+  return query
+  Select
+    *
+  from
+    link
+  where
+    link.id_item = idItem;
+END;
+$$;
+
+
+ALTER FUNCTION public.links(iditem integer) OWNER TO postgres;
+
+--
+-- TOC entry 204 (class 1255 OID 17094)
+-- Name: ranking(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION ranking() RETURNS TABLE(id integer, nomeusuario character varying, emailusuario character varying, pos bigint, neg bigint, totalusuario bigint)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+  return query
+  select
+    u.id,
+    u.nome,
+    u.email,
+    COALESCE(sum(ac.positiva), 0) as totalPositiva,
+    COALESCE(sum(ac.negativa), 0) as totalNegativa,
+    COALESCE(sum(ac.positiva - ac.negativa), 0) as total
+  from
+    usuario u
+    left join comentario c on (u.id = c.id_usuario)
+    left join avaliacao_comentario ac on (c.id = ac.id_comentario)
+  group by
+    1
+  order by
+    6 desc,
+    4 desc;
+  return;
+END;
+$$;
+
+
+ALTER FUNCTION public.ranking() OWNER TO postgres;
+
+--
+-- TOC entry 217 (class 1255 OID 17095)
+-- Name: sum(integer); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION sum(integer) RETURNS integer
+    LANGUAGE plpgsql
+    AS $_$
+DECLARE
+  count int8 := 7;
+  countCom int8 := 3;
+  negativa int8;
+  positiva int8;
+BEGIN
+  Loop
+    if countCom > 45 then
+      EXIT;  -- exit loop
+    END IF;
+    LOOP
+      -- some computations
+
+      IF count > $1 THEN
+        EXIT;  -- exit loop
+      END IF;
+      IF count % 2 = 0 THEN
+        positiva = 1;
+        negativa = 0;
+      END IF;
+
+      IF count % 2 <> 0 THEN
+        positiva = 0;
+        negativa = 1;
+      END IF;
+      INSERT INTO public.avaliacao_comentario(id_usuario, id_comentario,
+        positiva, negativa)
+      VALUES (count, countCom, positiva, negativa);
+      count:=count+1;
+    END LOOP;
+    count:=7;
+    countCom:=countCom+1;
+  end loop;
+  return countCom;
+END;
+$_$;
+
+
+ALTER FUNCTION public.sum(integer) OWNER TO postgres;
+
+--
+-- TOC entry 218 (class 1255 OID 17096)
+-- Name: trolls(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION trolls() RETURNS TABLE(idusuario integer, nomeusuario character varying, emailusuario character varying, totalusuario bigint, neg bigint, indicetotal numeric)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+  return query
+  SELECT
+    totalizador.userId,
+    userName,
+    userEmail,
+    total,
+    negativas,
+    round(totalizador.negativas * 100.0 / totalizador.total, 2) as indice
+  FROM
+    (
+      select
+        u.id as userId,
+        u.nome as userName,
+        u.email as userEmail,
+        COUNT(C.ID) as total,
+        SUM(CASE
+              WHEN AC.NEGATIVA > 0 then 1
+              else 0
+            end) as negativas
+      FROM
+        usuario u
+        inner join comentario C on (u.id = c.id_usuario)
+        INNER JOIN avaliacao_comentario AC ON (C.id = AC.id_comentario)
+      group by
+        1
+    ) AS totalizador
+    where round(totalizador.negativas * 100.0 / totalizador.total, 2) >= 50
+    order by 6 Desc;
+    
+    return;
+END;
+$$;
+
+
+ALTER FUNCTION public.trolls() OWNER TO postgres;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- TOC entry 185 (class 1259 OID 17097)
+-- Name: avaliacao_comentario; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE avaliacao_comentario (
+    id integer NOT NULL,
+    id_usuario integer NOT NULL,
+    id_comentario integer NOT NULL,
+    positiva integer,
+    negativa integer
+);
+
+
+ALTER TABLE avaliacao_comentario OWNER TO postgres;
+
+--
+-- TOC entry 186 (class 1259 OID 17100)
+-- Name: avaliacao_comentario_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE avaliacao_comentario_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE avaliacao_comentario_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2237 (class 0 OID 0)
+-- Dependencies: 186
+-- Name: avaliacao_comentario_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE avaliacao_comentario_id_seq OWNED BY avaliacao_comentario.id;
+
+
+--
+-- TOC entry 187 (class 1259 OID 17102)
+-- Name: avaliacao_item; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE avaliacao_item (
+    id integer NOT NULL,
+    id_usuario integer NOT NULL,
+    id_item integer NOT NULL,
+    positiva integer,
+    negativa integer
+);
+
+
+ALTER TABLE avaliacao_item OWNER TO postgres;
+
+--
+-- TOC entry 188 (class 1259 OID 17105)
+-- Name: avaliacao_item_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE avaliacao_item_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE avaliacao_item_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2238 (class 0 OID 0)
+-- Dependencies: 188
+-- Name: avaliacao_item_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE avaliacao_item_id_seq OWNED BY avaliacao_item.id;
+
+
+--
+-- TOC entry 200 (class 1259 OID 41686)
+-- Name: categoria; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE categoria (
+    id_categoria integer NOT NULL,
+    categoria character varying(200)
+);
+
+
+ALTER TABLE categoria OWNER TO postgres;
+
+--
+-- TOC entry 199 (class 1259 OID 41684)
+-- Name: categoria_id_categoria_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE categoria_id_categoria_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE categoria_id_categoria_seq OWNER TO postgres;
+
+--
+-- TOC entry 2239 (class 0 OID 0)
+-- Dependencies: 199
+-- Name: categoria_id_categoria_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE categoria_id_categoria_seq OWNED BY categoria.id_categoria;
+
+
+--
+-- TOC entry 198 (class 1259 OID 41670)
+-- Name: item_categoria; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE item_categoria (
+    id integer NOT NULL,
+    id_item integer NOT NULL,
+    id_categoria integer NOT NULL
+);
+
+
+ALTER TABLE item_categoria OWNER TO postgres;
+
+--
+-- TOC entry 197 (class 1259 OID 41668)
+-- Name: categoria_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE categoria_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE categoria_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2240 (class 0 OID 0)
+-- Dependencies: 197
+-- Name: categoria_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE categoria_id_seq OWNED BY item_categoria.id;
+
+
+--
+-- TOC entry 189 (class 1259 OID 17107)
+-- Name: comentario; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE comentario (
+    id integer NOT NULL,
+    id_usuario integer NOT NULL,
+    id_item integer NOT NULL,
+    comentario character varying(500) NOT NULL,
+    data_criacao timestamp without time zone NOT NULL,
+    data_atualizacao timestamp without time zone NOT NULL
+);
+
+
+ALTER TABLE comentario OWNER TO postgres;
+
+--
+-- TOC entry 190 (class 1259 OID 17113)
+-- Name: comentario_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE comentario_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE comentario_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2241 (class 0 OID 0)
+-- Dependencies: 190
+-- Name: comentario_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE comentario_id_seq OWNED BY comentario.id;
+
+
+--
+-- TOC entry 202 (class 1259 OID 41699)
+-- Name: configuracao; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE configuracao (
+    id integer NOT NULL,
+    chave character varying(100),
+    valor character varying(100)
+);
+
+
+ALTER TABLE configuracao OWNER TO postgres;
+
+--
+-- TOC entry 201 (class 1259 OID 41697)
+-- Name: configuracao_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE configuracao_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE configuracao_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2242 (class 0 OID 0)
+-- Dependencies: 201
+-- Name: configuracao_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE configuracao_id_seq OWNED BY configuracao.id;
+
+
+--
+-- TOC entry 191 (class 1259 OID 17115)
+-- Name: item; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE item (
+    id integer NOT NULL,
+    id_usuario integer NOT NULL,
+    titulo character varying(500) NOT NULL,
+    descricao character varying(500),
+    data_criacao timestamp without time zone NOT NULL,
+    data_atualizacao timestamp without time zone NOT NULL
+);
+
+
+ALTER TABLE item OWNER TO postgres;
+
+--
+-- TOC entry 192 (class 1259 OID 17121)
+-- Name: item_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE item_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE item_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2243 (class 0 OID 0)
+-- Dependencies: 192
+-- Name: item_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE item_id_seq OWNED BY item.id;
+
+
+--
+-- TOC entry 193 (class 1259 OID 17123)
+-- Name: link; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE link (
+    id integer NOT NULL,
+    id_item integer,
+    link character varying(500) NOT NULL
+);
+
+
+ALTER TABLE link OWNER TO postgres;
+
+--
+-- TOC entry 194 (class 1259 OID 17129)
+-- Name: link_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE link_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE link_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2244 (class 0 OID 0)
+-- Dependencies: 194
+-- Name: link_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE link_id_seq OWNED BY link.id;
+
+
+--
+-- TOC entry 195 (class 1259 OID 17131)
+-- Name: usuario; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE usuario (
+    id integer NOT NULL,
+    nome character varying(500) NOT NULL,
+    email character varying(500) NOT NULL,
+    login character varying(500) NOT NULL,
+    senha character varying(500) NOT NULL
+);
+
+
+ALTER TABLE usuario OWNER TO postgres;
+
+--
+-- TOC entry 196 (class 1259 OID 17137)
+-- Name: usuario_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE usuario_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE usuario_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2245 (class 0 OID 0)
+-- Dependencies: 196
+-- Name: usuario_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE usuario_id_seq OWNED BY usuario.id;
+
+
+--
+-- TOC entry 2058 (class 2604 OID 17139)
+-- Name: avaliacao_comentario id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY avaliacao_comentario ALTER COLUMN id SET DEFAULT nextval('avaliacao_comentario_id_seq'::regclass);
+
+
+--
+-- TOC entry 2059 (class 2604 OID 17140)
+-- Name: avaliacao_item id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY avaliacao_item ALTER COLUMN id SET DEFAULT nextval('avaliacao_item_id_seq'::regclass);
+
+
+--
+-- TOC entry 2065 (class 2604 OID 41689)
+-- Name: categoria id_categoria; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY categoria ALTER COLUMN id_categoria SET DEFAULT nextval('categoria_id_categoria_seq'::regclass);
+
+
+--
+-- TOC entry 2060 (class 2604 OID 17141)
+-- Name: comentario id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY comentario ALTER COLUMN id SET DEFAULT nextval('comentario_id_seq'::regclass);
+
+
+--
+-- TOC entry 2066 (class 2604 OID 41702)
+-- Name: configuracao id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY configuracao ALTER COLUMN id SET DEFAULT nextval('configuracao_id_seq'::regclass);
+
+
+--
+-- TOC entry 2061 (class 2604 OID 17142)
+-- Name: item id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY item ALTER COLUMN id SET DEFAULT nextval('item_id_seq'::regclass);
+
+
+--
+-- TOC entry 2064 (class 2604 OID 41673)
+-- Name: item_categoria id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY item_categoria ALTER COLUMN id SET DEFAULT nextval('categoria_id_seq'::regclass);
+
+
+--
+-- TOC entry 2062 (class 2604 OID 17143)
+-- Name: link id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY link ALTER COLUMN id SET DEFAULT nextval('link_id_seq'::regclass);
+
+
+--
+-- TOC entry 2063 (class 2604 OID 17144)
+-- Name: usuario id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY usuario ALTER COLUMN id SET DEFAULT nextval('usuario_id_seq'::regclass);
+
+
+--
+-- TOC entry 2212 (class 0 OID 17097)
+-- Dependencies: 185
+-- Data for Name: avaliacao_comentario; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY avaliacao_comentario (id, id_usuario, id_comentario, positiva, negativa) FROM stdin;
+218	7	1	0	1
+219	8	1	1	0
+220	9	1	0	1
+221	10	1	1	0
+222	11	1	0	1
+223	12	1	1	0
+224	13	1	0	1
+225	14	1	1	0
+226	15	1	0	1
+227	16	1	1	0
+228	17	1	0	1
+229	18	1	1	0
+230	19	1	0	1
+231	20	1	1	0
+232	21	1	0	1
+233	22	1	1	0
+234	23	1	0	1
+235	24	1	1	0
+236	25	1	0	1
+237	26	1	1	0
+238	27	1	0	1
+239	28	1	1	0
+240	29	1	0	1
+241	30	1	1	0
+242	31	1	0	1
+243	32	1	1	0
+244	33	1	0	1
+245	34	1	1	0
+246	35	1	0	1
+247	36	1	1	0
+248	37	1	0	1
+249	38	1	1	0
+250	39	1	0	1
+251	40	1	1	0
+252	41	1	0	1
+253	42	1	1	0
+254	43	1	0	1
+255	44	1	1	0
+256	45	1	0	1
+257	46	1	1	0
+258	47	1	0	1
+259	48	1	1	0
+260	49	1	0	1
+261	49	2	1	0
+263	7	3	0	1
+264	8	3	1	0
+265	9	3	0	1
+266	10	3	1	0
+267	11	3	0	1
+268	12	3	1	0
+269	13	3	0	1
+270	14	3	1	0
+271	15	3	0	1
+272	16	3	1	0
+273	17	3	0	1
+274	18	3	1	0
+275	19	3	0	1
+276	20	3	1	0
+277	21	3	0	1
+278	22	3	1	0
+279	23	3	0	1
+280	24	3	1	0
+281	25	3	0	1
+282	26	3	1	0
+283	27	3	0	1
+284	28	3	1	0
+285	29	3	0	1
+286	30	3	1	0
+287	31	3	0	1
+288	32	3	1	0
+289	33	3	0	1
+290	34	3	1	0
+291	35	3	0	1
+292	36	3	1	0
+293	37	3	0	1
+294	38	3	1	0
+295	39	3	0	1
+296	40	3	1	0
+297	41	3	0	1
+298	42	3	1	0
+299	43	3	0	1
+300	44	3	1	0
+301	45	3	0	1
+302	46	3	1	0
+303	47	3	0	1
+304	48	3	1	0
+305	49	3	0	1
+306	7	3	0	1
+307	8	3	1	0
+308	9	3	0	1
+309	10	3	1	0
+310	11	3	0	1
+311	12	3	1	0
+312	13	3	0	1
+313	14	3	1	0
+314	15	3	0	1
+315	16	3	1	0
+316	17	3	0	1
+317	18	3	1	0
+318	19	3	0	1
+319	20	3	1	0
+320	21	3	0	1
+321	22	3	1	0
+322	23	3	0	1
+323	24	3	1	0
+324	25	3	0	1
+325	26	3	1	0
+326	27	3	0	1
+327	28	3	1	0
+328	29	3	0	1
+329	30	3	1	0
+330	31	3	0	1
+331	32	3	1	0
+332	33	3	0	1
+333	34	3	1	0
+334	35	3	0	1
+335	36	3	1	0
+336	37	3	0	1
+337	38	3	1	0
+338	39	3	0	1
+339	40	3	1	0
+340	41	3	0	1
+341	42	3	1	0
+342	43	3	0	1
+343	44	3	1	0
+344	45	3	0	1
+345	46	3	1	0
+346	47	3	0	1
+347	48	3	1	0
+348	49	3	0	1
+481	7	3	0	1
+482	8	3	1	0
+483	9	3	0	1
+484	10	3	1	0
+485	11	3	0	1
+486	12	3	1	0
+487	13	3	0	1
+488	14	3	1	0
+489	15	3	0	1
+490	16	3	1	0
+491	17	3	0	1
+492	18	3	1	0
+493	19	3	0	1
+494	20	3	1	0
+495	21	3	0	1
+496	22	3	1	0
+497	23	3	0	1
+498	24	3	1	0
+499	25	3	0	1
+500	26	3	1	0
+501	27	3	0	1
+502	28	3	1	0
+503	29	3	0	1
+504	30	3	1	0
+505	31	3	0	1
+506	32	3	1	0
+507	33	3	0	1
+508	34	3	1	0
+509	35	3	0	1
+510	36	3	1	0
+511	37	3	0	1
+512	38	3	1	0
+513	39	3	0	1
+514	40	3	1	0
+515	41	3	0	1
+516	42	3	1	0
+517	43	3	0	1
+518	44	3	1	0
+519	45	3	0	1
+520	46	3	1	0
+521	47	3	0	1
+522	48	3	1	0
+523	49	3	0	1
+524	7	4	0	1
+525	8	4	1	0
+526	9	4	0	1
+527	10	4	1	0
+528	11	4	0	1
+529	12	4	1	0
+530	13	4	0	1
+531	14	4	1	0
+532	15	4	0	1
+533	16	4	1	0
+534	17	4	0	1
+535	18	4	1	0
+536	19	4	0	1
+537	20	4	1	0
+538	21	4	0	1
+539	22	4	1	0
+540	23	4	0	1
+541	24	4	1	0
+542	25	4	0	1
+543	26	4	1	0
+544	27	4	0	1
+545	28	4	1	0
+546	29	4	0	1
+547	30	4	1	0
+548	31	4	0	1
+549	32	4	1	0
+550	33	4	0	1
+551	34	4	1	0
+552	35	4	0	1
+553	36	4	1	0
+554	37	4	0	1
+555	38	4	1	0
+556	39	4	0	1
+557	40	4	1	0
+558	41	4	0	1
+559	42	4	1	0
+560	43	4	0	1
+561	44	4	1	0
+562	45	4	0	1
+563	46	4	1	0
+564	47	4	0	1
+565	48	4	1	0
+566	49	4	0	1
+567	7	5	0	1
+568	8	5	1	0
+569	9	5	0	1
+570	10	5	1	0
+571	11	5	0	1
+572	12	5	1	0
+573	13	5	0	1
+574	14	5	1	0
+575	15	5	0	1
+576	16	5	1	0
+577	17	5	0	1
+578	18	5	1	0
+579	19	5	0	1
+580	20	5	1	0
+581	21	5	0	1
+582	22	5	1	0
+583	23	5	0	1
+584	24	5	1	0
+585	25	5	0	1
+586	26	5	1	0
+587	27	5	0	1
+588	28	5	1	0
+589	29	5	0	1
+590	30	5	1	0
+591	31	5	0	1
+592	32	5	1	0
+593	33	5	0	1
+594	34	5	1	0
+595	35	5	0	1
+596	36	5	1	0
+597	37	5	0	1
+598	38	5	1	0
+599	39	5	0	1
+600	40	5	1	0
+601	41	5	0	1
+602	42	5	1	0
+603	43	5	0	1
+604	44	5	1	0
+605	45	5	0	1
+606	46	5	1	0
+607	47	5	0	1
+608	48	5	1	0
+609	49	5	0	1
+610	7	6	0	1
+611	8	6	1	0
+612	9	6	0	1
+613	10	6	1	0
+614	11	6	0	1
+615	12	6	1	0
+616	13	6	0	1
+617	14	6	1	0
+618	15	6	0	1
+619	16	6	1	0
+620	17	6	0	1
+621	18	6	1	0
+622	19	6	0	1
+623	20	6	1	0
+624	21	6	0	1
+625	22	6	1	0
+626	23	6	0	1
+627	24	6	1	0
+628	25	6	0	1
+629	26	6	1	0
+630	27	6	0	1
+631	28	6	1	0
+632	29	6	0	1
+633	30	6	1	0
+634	31	6	0	1
+635	32	6	1	0
+636	33	6	0	1
+637	34	6	1	0
+638	35	6	0	1
+639	36	6	1	0
+640	37	6	0	1
+641	38	6	1	0
+642	39	6	0	1
+643	40	6	1	0
+644	41	6	0	1
+645	42	6	1	0
+646	43	6	0	1
+647	44	6	1	0
+648	45	6	0	1
+649	46	6	1	0
+650	47	6	0	1
+651	48	6	1	0
+652	49	6	0	1
+653	7	7	0	1
+654	8	7	1	0
+655	9	7	0	1
+656	10	7	1	0
+657	11	7	0	1
+658	12	7	1	0
+659	13	7	0	1
+660	14	7	1	0
+661	15	7	0	1
+662	16	7	1	0
+663	17	7	0	1
+664	18	7	1	0
+665	19	7	0	1
+666	20	7	1	0
+667	21	7	0	1
+668	22	7	1	0
+669	23	7	0	1
+670	24	7	1	0
+671	25	7	0	1
+672	26	7	1	0
+673	27	7	0	1
+674	28	7	1	0
+675	29	7	0	1
+676	30	7	1	0
+677	31	7	0	1
+678	32	7	1	0
+679	33	7	0	1
+680	34	7	1	0
+681	35	7	0	1
+682	36	7	1	0
+683	37	7	0	1
+684	38	7	1	0
+685	39	7	0	1
+686	40	7	1	0
+687	41	7	0	1
+688	42	7	1	0
+689	43	7	0	1
+690	44	7	1	0
+691	45	7	0	1
+692	46	7	1	0
+693	47	7	0	1
+694	48	7	1	0
+695	49	7	0	1
+696	7	8	0	1
+697	8	8	1	0
+698	9	8	0	1
+699	10	8	1	0
+700	11	8	0	1
+701	12	8	1	0
+702	13	8	0	1
+703	14	8	1	0
+704	15	8	0	1
+705	16	8	1	0
+706	17	8	0	1
+707	18	8	1	0
+708	19	8	0	1
+709	20	8	1	0
+710	21	8	0	1
+711	22	8	1	0
+712	23	8	0	1
+713	24	8	1	0
+714	25	8	0	1
+715	26	8	1	0
+716	27	8	0	1
+717	28	8	1	0
+718	29	8	0	1
+719	30	8	1	0
+720	31	8	0	1
+721	32	8	1	0
+722	33	8	0	1
+723	34	8	1	0
+724	35	8	0	1
+725	36	8	1	0
+726	37	8	0	1
+727	38	8	1	0
+728	39	8	0	1
+729	40	8	1	0
+730	41	8	0	1
+731	42	8	1	0
+732	43	8	0	1
+733	44	8	1	0
+734	45	8	0	1
+735	46	8	1	0
+736	47	8	0	1
+737	48	8	1	0
+738	49	8	0	1
+739	7	9	0	1
+740	8	9	1	0
+741	9	9	0	1
+742	10	9	1	0
+743	11	9	0	1
+744	12	9	1	0
+745	13	9	0	1
+746	14	9	1	0
+747	15	9	0	1
+748	16	9	1	0
+749	17	9	0	1
+750	18	9	1	0
+751	19	9	0	1
+752	20	9	1	0
+753	21	9	0	1
+754	22	9	1	0
+755	23	9	0	1
+756	24	9	1	0
+757	25	9	0	1
+758	26	9	1	0
+759	27	9	0	1
+760	28	9	1	0
+761	29	9	0	1
+762	30	9	1	0
+763	31	9	0	1
+764	32	9	1	0
+765	33	9	0	1
+766	34	9	1	0
+767	35	9	0	1
+768	36	9	1	0
+769	37	9	0	1
+770	38	9	1	0
+771	39	9	0	1
+772	40	9	1	0
+773	41	9	0	1
+774	42	9	1	0
+775	43	9	0	1
+776	44	9	1	0
+777	45	9	0	1
+778	46	9	1	0
+779	47	9	0	1
+780	48	9	1	0
+781	49	9	0	1
+782	7	10	0	1
+783	8	10	1	0
+784	9	10	0	1
+785	10	10	1	0
+786	11	10	0	1
+787	12	10	1	0
+788	13	10	0	1
+789	14	10	1	0
+790	15	10	0	1
+791	16	10	1	0
+792	17	10	0	1
+793	18	10	1	0
+794	19	10	0	1
+795	20	10	1	0
+796	21	10	0	1
+797	22	10	1	0
+798	23	10	0	1
+799	24	10	1	0
+800	25	10	0	1
+801	26	10	1	0
+802	27	10	0	1
+803	28	10	1	0
+804	29	10	0	1
+805	30	10	1	0
+806	31	10	0	1
+807	32	10	1	0
+808	33	10	0	1
+809	34	10	1	0
+810	35	10	0	1
+811	36	10	1	0
+812	37	10	0	1
+813	38	10	1	0
+814	39	10	0	1
+815	40	10	1	0
+816	41	10	0	1
+817	42	10	1	0
+818	43	10	0	1
+819	44	10	1	0
+820	45	10	0	1
+821	46	10	1	0
+822	47	10	0	1
+823	48	10	1	0
+824	49	10	0	1
+825	7	11	0	1
+826	8	11	1	0
+827	9	11	0	1
+828	10	11	1	0
+829	11	11	0	1
+830	12	11	1	0
+831	13	11	0	1
+832	14	11	1	0
+833	15	11	0	1
+834	16	11	1	0
+835	17	11	0	1
+836	18	11	1	0
+837	19	11	0	1
+838	20	11	1	0
+839	21	11	0	1
+840	22	11	1	0
+841	23	11	0	1
+842	24	11	1	0
+843	25	11	0	1
+844	26	11	1	0
+845	27	11	0	1
+846	28	11	1	0
+847	29	11	0	1
+848	30	11	1	0
+849	31	11	0	1
+850	32	11	1	0
+851	33	11	0	1
+852	34	11	1	0
+853	35	11	0	1
+854	36	11	1	0
+855	37	11	0	1
+856	38	11	1	0
+857	39	11	0	1
+858	40	11	1	0
+859	41	11	0	1
+860	42	11	1	0
+861	43	11	0	1
+862	44	11	1	0
+863	45	11	0	1
+864	46	11	1	0
+865	47	11	0	1
+866	48	11	1	0
+867	49	11	0	1
+868	7	12	0	1
+869	8	12	1	0
+870	9	12	0	1
+871	10	12	1	0
+872	11	12	0	1
+873	12	12	1	0
+874	13	12	0	1
+875	14	12	1	0
+876	15	12	0	1
+877	16	12	1	0
+878	17	12	0	1
+879	18	12	1	0
+880	19	12	0	1
+881	20	12	1	0
+882	21	12	0	1
+883	22	12	1	0
+884	23	12	0	1
+885	24	12	1	0
+886	25	12	0	1
+887	26	12	1	0
+888	27	12	0	1
+889	28	12	1	0
+890	29	12	0	1
+891	30	12	1	0
+892	31	12	0	1
+893	32	12	1	0
+894	33	12	0	1
+895	34	12	1	0
+896	35	12	0	1
+897	36	12	1	0
+898	37	12	0	1
+899	38	12	1	0
+900	39	12	0	1
+901	40	12	1	0
+902	41	12	0	1
+903	42	12	1	0
+904	43	12	0	1
+905	44	12	1	0
+906	45	12	0	1
+907	46	12	1	0
+908	47	12	0	1
+909	48	12	1	0
+910	49	12	0	1
+911	7	13	0	1
+912	8	13	1	0
+913	9	13	0	1
+914	10	13	1	0
+915	11	13	0	1
+916	12	13	1	0
+917	13	13	0	1
+918	14	13	1	0
+919	15	13	0	1
+920	16	13	1	0
+921	17	13	0	1
+922	18	13	1	0
+923	19	13	0	1
+924	20	13	1	0
+925	21	13	0	1
+926	22	13	1	0
+927	23	13	0	1
+928	24	13	1	0
+929	25	13	0	1
+930	26	13	1	0
+931	27	13	0	1
+932	28	13	1	0
+933	29	13	0	1
+934	30	13	1	0
+935	31	13	0	1
+936	32	13	1	0
+937	33	13	0	1
+938	34	13	1	0
+939	35	13	0	1
+940	36	13	1	0
+941	37	13	0	1
+942	38	13	1	0
+943	39	13	0	1
+944	40	13	1	0
+945	41	13	0	1
+946	42	13	1	0
+947	43	13	0	1
+948	44	13	1	0
+949	45	13	0	1
+950	46	13	1	0
+951	47	13	0	1
+952	48	13	1	0
+953	49	13	0	1
+954	7	14	0	1
+955	8	14	1	0
+956	9	14	0	1
+957	10	14	1	0
+958	11	14	0	1
+959	12	14	1	0
+960	13	14	0	1
+961	14	14	1	0
+962	15	14	0	1
+963	16	14	1	0
+964	17	14	0	1
+965	18	14	1	0
+966	19	14	0	1
+967	20	14	1	0
+968	21	14	0	1
+969	22	14	1	0
+970	23	14	0	1
+971	24	14	1	0
+972	25	14	0	1
+973	26	14	1	0
+974	27	14	0	1
+975	28	14	1	0
+976	29	14	0	1
+977	30	14	1	0
+978	31	14	0	1
+979	32	14	1	0
+980	33	14	0	1
+981	34	14	1	0
+982	35	14	0	1
+983	36	14	1	0
+984	37	14	0	1
+985	38	14	1	0
+986	39	14	0	1
+987	40	14	1	0
+988	41	14	0	1
+989	42	14	1	0
+990	43	14	0	1
+991	44	14	1	0
+992	45	14	0	1
+993	46	14	1	0
+994	47	14	0	1
+995	48	14	1	0
+996	49	14	0	1
+997	7	15	0	1
+998	8	15	1	0
+999	9	15	0	1
+1000	10	15	1	0
+1001	11	15	0	1
+1002	12	15	1	0
+1003	13	15	0	1
+1004	14	15	1	0
+1005	15	15	0	1
+1006	16	15	1	0
+1007	17	15	0	1
+1008	18	15	1	0
+1009	19	15	0	1
+1010	20	15	1	0
+1011	21	15	0	1
+1012	22	15	1	0
+1013	23	15	0	1
+1014	24	15	1	0
+1015	25	15	0	1
+1016	26	15	1	0
+1017	27	15	0	1
+1018	28	15	1	0
+1019	29	15	0	1
+1020	30	15	1	0
+1021	31	15	0	1
+1022	32	15	1	0
+1023	33	15	0	1
+1024	34	15	1	0
+1025	35	15	0	1
+1026	36	15	1	0
+1027	37	15	0	1
+1028	38	15	1	0
+1029	39	15	0	1
+1030	40	15	1	0
+1031	41	15	0	1
+1032	42	15	1	0
+1033	43	15	0	1
+1034	44	15	1	0
+1035	45	15	0	1
+1036	46	15	1	0
+1037	47	15	0	1
+1038	48	15	1	0
+1039	49	15	0	1
+1040	7	16	0	1
+1041	8	16	1	0
+1042	9	16	0	1
+1043	10	16	1	0
+1044	11	16	0	1
+1045	12	16	1	0
+1046	13	16	0	1
+1047	14	16	1	0
+1048	15	16	0	1
+1049	16	16	1	0
+1050	17	16	0	1
+1051	18	16	1	0
+1052	19	16	0	1
+1053	20	16	1	0
+1054	21	16	0	1
+1055	22	16	1	0
+1056	23	16	0	1
+1057	24	16	1	0
+1058	25	16	0	1
+1059	26	16	1	0
+1060	27	16	0	1
+1061	28	16	1	0
+1062	29	16	0	1
+1063	30	16	1	0
+1064	31	16	0	1
+1065	32	16	1	0
+1066	33	16	0	1
+1067	34	16	1	0
+1068	35	16	0	1
+1069	36	16	1	0
+1070	37	16	0	1
+1071	38	16	1	0
+1072	39	16	0	1
+1073	40	16	1	0
+1074	41	16	0	1
+1075	42	16	1	0
+1076	43	16	0	1
+1077	44	16	1	0
+1078	45	16	0	1
+1079	46	16	1	0
+1080	47	16	0	1
+1081	48	16	1	0
+1082	49	16	0	1
+1083	7	17	0	1
+1084	8	17	1	0
+1085	9	17	0	1
+1086	10	17	1	0
+1087	11	17	0	1
+1088	12	17	1	0
+1089	13	17	0	1
+1090	14	17	1	0
+1091	15	17	0	1
+1092	16	17	1	0
+1093	17	17	0	1
+1094	18	17	1	0
+1095	19	17	0	1
+1096	20	17	1	0
+1097	21	17	0	1
+1098	22	17	1	0
+1099	23	17	0	1
+1100	24	17	1	0
+1101	25	17	0	1
+1102	26	17	1	0
+1103	27	17	0	1
+1104	28	17	1	0
+1105	29	17	0	1
+1106	30	17	1	0
+1107	31	17	0	1
+1108	32	17	1	0
+1109	33	17	0	1
+1110	34	17	1	0
+1111	35	17	0	1
+1112	36	17	1	0
+1113	37	17	0	1
+1114	38	17	1	0
+1115	39	17	0	1
+1116	40	17	1	0
+1117	41	17	0	1
+1118	42	17	1	0
+1119	43	17	0	1
+1120	44	17	1	0
+1121	45	17	0	1
+1122	46	17	1	0
+1123	47	17	0	1
+1124	48	17	1	0
+1125	49	17	0	1
+1126	7	18	0	1
+1127	8	18	1	0
+1128	9	18	0	1
+1129	10	18	1	0
+1130	11	18	0	1
+1131	12	18	1	0
+1132	13	18	0	1
+1133	14	18	1	0
+1134	15	18	0	1
+1135	16	18	1	0
+1136	17	18	0	1
+1137	18	18	1	0
+1138	19	18	0	1
+1139	20	18	1	0
+1140	21	18	0	1
+1141	22	18	1	0
+1142	23	18	0	1
+1143	24	18	1	0
+1144	25	18	0	1
+1145	26	18	1	0
+1146	27	18	0	1
+1147	28	18	1	0
+1148	29	18	0	1
+1149	30	18	1	0
+1150	31	18	0	1
+1151	32	18	1	0
+1152	33	18	0	1
+1153	34	18	1	0
+1154	35	18	0	1
+1155	36	18	1	0
+1156	37	18	0	1
+1157	38	18	1	0
+1158	39	18	0	1
+1159	40	18	1	0
+1160	41	18	0	1
+1161	42	18	1	0
+1162	43	18	0	1
+1163	44	18	1	0
+1164	45	18	0	1
+1165	46	18	1	0
+1166	47	18	0	1
+1167	48	18	1	0
+1168	49	18	0	1
+1169	7	19	0	1
+1170	8	19	1	0
+1171	9	19	0	1
+1172	10	19	1	0
+1173	11	19	0	1
+1174	12	19	1	0
+1175	13	19	0	1
+1176	14	19	1	0
+1177	15	19	0	1
+1178	16	19	1	0
+1179	17	19	0	1
+1180	18	19	1	0
+1181	19	19	0	1
+1182	20	19	1	0
+1183	21	19	0	1
+1184	22	19	1	0
+1185	23	19	0	1
+1186	24	19	1	0
+1187	25	19	0	1
+1188	26	19	1	0
+1189	27	19	0	1
+1190	28	19	1	0
+1191	29	19	0	1
+1192	30	19	1	0
+1193	31	19	0	1
+1194	32	19	1	0
+1195	33	19	0	1
+1196	34	19	1	0
+1197	35	19	0	1
+1198	36	19	1	0
+1199	37	19	0	1
+1200	38	19	1	0
+1201	39	19	0	1
+1202	40	19	1	0
+1203	41	19	0	1
+1204	42	19	1	0
+1205	43	19	0	1
+1206	44	19	1	0
+1207	45	19	0	1
+1208	46	19	1	0
+1209	47	19	0	1
+1210	48	19	1	0
+1211	49	19	0	1
+1212	7	20	0	1
+1213	8	20	1	0
+1214	9	20	0	1
+1215	10	20	1	0
+1216	11	20	0	1
+1217	12	20	1	0
+1218	13	20	0	1
+1219	14	20	1	0
+1220	15	20	0	1
+1221	16	20	1	0
+1222	17	20	0	1
+1223	18	20	1	0
+1224	19	20	0	1
+1225	20	20	1	0
+1226	21	20	0	1
+1227	22	20	1	0
+1228	23	20	0	1
+1229	24	20	1	0
+1230	25	20	0	1
+1231	26	20	1	0
+1232	27	20	0	1
+1233	28	20	1	0
+1234	29	20	0	1
+1235	30	20	1	0
+1236	31	20	0	1
+1237	32	20	1	0
+1238	33	20	0	1
+1239	34	20	1	0
+1240	35	20	0	1
+1241	36	20	1	0
+1242	37	20	0	1
+1243	38	20	1	0
+1244	39	20	0	1
+1245	40	20	1	0
+1246	41	20	0	1
+1247	42	20	1	0
+1248	43	20	0	1
+1249	44	20	1	0
+1250	45	20	0	1
+1251	46	20	1	0
+1252	47	20	0	1
+1253	48	20	1	0
+1254	49	20	0	1
+1255	7	21	0	1
+1256	8	21	1	0
+1257	9	21	0	1
+1258	10	21	1	0
+1259	11	21	0	1
+1260	12	21	1	0
+1261	13	21	0	1
+1262	14	21	1	0
+1263	15	21	0	1
+1264	16	21	1	0
+1265	17	21	0	1
+1266	18	21	1	0
+1267	19	21	0	1
+1268	20	21	1	0
+1269	21	21	0	1
+1270	22	21	1	0
+1271	23	21	0	1
+1272	24	21	1	0
+1273	25	21	0	1
+1274	26	21	1	0
+1275	27	21	0	1
+1276	28	21	1	0
+1277	29	21	0	1
+1278	30	21	1	0
+1279	31	21	0	1
+1280	32	21	1	0
+1281	33	21	0	1
+1282	34	21	1	0
+1283	35	21	0	1
+1284	36	21	1	0
+1285	37	21	0	1
+1286	38	21	1	0
+1287	39	21	0	1
+1288	40	21	1	0
+1289	41	21	0	1
+1290	42	21	1	0
+1291	43	21	0	1
+1292	44	21	1	0
+1293	45	21	0	1
+1294	46	21	1	0
+1295	47	21	0	1
+1296	48	21	1	0
+1297	49	21	0	1
+1298	7	22	0	1
+1299	8	22	1	0
+1300	9	22	0	1
+1301	10	22	1	0
+1302	11	22	0	1
+1303	12	22	1	0
+1304	13	22	0	1
+1305	14	22	1	0
+1306	15	22	0	1
+1307	16	22	1	0
+1308	17	22	0	1
+1309	18	22	1	0
+1310	19	22	0	1
+1311	20	22	1	0
+1312	21	22	0	1
+1313	22	22	1	0
+1314	23	22	0	1
+1315	24	22	1	0
+1316	25	22	0	1
+1317	26	22	1	0
+1318	27	22	0	1
+1319	28	22	1	0
+1320	29	22	0	1
+1321	30	22	1	0
+1322	31	22	0	1
+1323	32	22	1	0
+1324	33	22	0	1
+1325	34	22	1	0
+1326	35	22	0	1
+1327	36	22	1	0
+1328	37	22	0	1
+1329	38	22	1	0
+1330	39	22	0	1
+1331	40	22	1	0
+1332	41	22	0	1
+1333	42	22	1	0
+1334	43	22	0	1
+1335	44	22	1	0
+1336	45	22	0	1
+1337	46	22	1	0
+1338	47	22	0	1
+1339	48	22	1	0
+1340	49	22	0	1
+1341	7	23	0	1
+1342	8	23	1	0
+1343	9	23	0	1
+1344	10	23	1	0
+1345	11	23	0	1
+1346	12	23	1	0
+1347	13	23	0	1
+1348	14	23	1	0
+1349	15	23	0	1
+1350	16	23	1	0
+1351	17	23	0	1
+1352	18	23	1	0
+1353	19	23	0	1
+1354	20	23	1	0
+1355	21	23	0	1
+1356	22	23	1	0
+1357	23	23	0	1
+1358	24	23	1	0
+1359	25	23	0	1
+1360	26	23	1	0
+1361	27	23	0	1
+1362	28	23	1	0
+1363	29	23	0	1
+1364	30	23	1	0
+1365	31	23	0	1
+1366	32	23	1	0
+1367	33	23	0	1
+1368	34	23	1	0
+1369	35	23	0	1
+1370	36	23	1	0
+1371	37	23	0	1
+1372	38	23	1	0
+1373	39	23	0	1
+1374	40	23	1	0
+1375	41	23	0	1
+1376	42	23	1	0
+1377	43	23	0	1
+1378	44	23	1	0
+1379	45	23	0	1
+1380	46	23	1	0
+1381	47	23	0	1
+1382	48	23	1	0
+1383	49	23	0	1
+1384	7	24	0	1
+1385	8	24	1	0
+1386	9	24	0	1
+1387	10	24	1	0
+1388	11	24	0	1
+1389	12	24	1	0
+1390	13	24	0	1
+1391	14	24	1	0
+1392	15	24	0	1
+1393	16	24	1	0
+1394	17	24	0	1
+1395	18	24	1	0
+1396	19	24	0	1
+1397	20	24	1	0
+1398	21	24	0	1
+1399	22	24	1	0
+1400	23	24	0	1
+1401	24	24	1	0
+1402	25	24	0	1
+1403	26	24	1	0
+1404	27	24	0	1
+1405	28	24	1	0
+1406	29	24	0	1
+1407	30	24	1	0
+1408	31	24	0	1
+1409	32	24	1	0
+1410	33	24	0	1
+1411	34	24	1	0
+1412	35	24	0	1
+1413	36	24	1	0
+1414	37	24	0	1
+1415	38	24	1	0
+1416	39	24	0	1
+1417	40	24	1	0
+1418	41	24	0	1
+1419	42	24	1	0
+1420	43	24	0	1
+1421	44	24	1	0
+1422	45	24	0	1
+1423	46	24	1	0
+1424	47	24	0	1
+1425	48	24	1	0
+1426	49	24	0	1
+1427	7	25	0	1
+1428	8	25	1	0
+1429	9	25	0	1
+1430	10	25	1	0
+1431	11	25	0	1
+1432	12	25	1	0
+1433	13	25	0	1
+1434	14	25	1	0
+1435	15	25	0	1
+1436	16	25	1	0
+1437	17	25	0	1
+1438	18	25	1	0
+1439	19	25	0	1
+1440	20	25	1	0
+1441	21	25	0	1
+1442	22	25	1	0
+1443	23	25	0	1
+1444	24	25	1	0
+1445	25	25	0	1
+1446	26	25	1	0
+1447	27	25	0	1
+1448	28	25	1	0
+1449	29	25	0	1
+1450	30	25	1	0
+1451	31	25	0	1
+1452	32	25	1	0
+1453	33	25	0	1
+1454	34	25	1	0
+1455	35	25	0	1
+1456	36	25	1	0
+1457	37	25	0	1
+1458	38	25	1	0
+1459	39	25	0	1
+1460	40	25	1	0
+1461	41	25	0	1
+1462	42	25	1	0
+1463	43	25	0	1
+1464	44	25	1	0
+1465	45	25	0	1
+1466	46	25	1	0
+1467	47	25	0	1
+1468	48	25	1	0
+1469	49	25	0	1
+1470	7	26	0	1
+1471	8	26	1	0
+1472	9	26	0	1
+1473	10	26	1	0
+1474	11	26	0	1
+1475	12	26	1	0
+1476	13	26	0	1
+1477	14	26	1	0
+1478	15	26	0	1
+1479	16	26	1	0
+1480	17	26	0	1
+1481	18	26	1	0
+1482	19	26	0	1
+1483	20	26	1	0
+1484	21	26	0	1
+1485	22	26	1	0
+1486	23	26	0	1
+1487	24	26	1	0
+1488	25	26	0	1
+1489	26	26	1	0
+1490	27	26	0	1
+1491	28	26	1	0
+1492	29	26	0	1
+1493	30	26	1	0
+1494	31	26	0	1
+1495	32	26	1	0
+1496	33	26	0	1
+1497	34	26	1	0
+1498	35	26	0	1
+1499	36	26	1	0
+1500	37	26	0	1
+1501	38	26	1	0
+1502	39	26	0	1
+1503	40	26	1	0
+1504	41	26	0	1
+1505	42	26	1	0
+1506	43	26	0	1
+1507	44	26	1	0
+1508	45	26	0	1
+1509	46	26	1	0
+1510	47	26	0	1
+1511	48	26	1	0
+1512	49	26	0	1
+1513	7	27	0	1
+1514	8	27	1	0
+1515	9	27	0	1
+1516	10	27	1	0
+1517	11	27	0	1
+1518	12	27	1	0
+1519	13	27	0	1
+1520	14	27	1	0
+1521	15	27	0	1
+1522	16	27	1	0
+1523	17	27	0	1
+1524	18	27	1	0
+1525	19	27	0	1
+1526	20	27	1	0
+1527	21	27	0	1
+1528	22	27	1	0
+1529	23	27	0	1
+1530	24	27	1	0
+1531	25	27	0	1
+1532	26	27	1	0
+1533	27	27	0	1
+1534	28	27	1	0
+1535	29	27	0	1
+1536	30	27	1	0
+1537	31	27	0	1
+1538	32	27	1	0
+1539	33	27	0	1
+1540	34	27	1	0
+1541	35	27	0	1
+1542	36	27	1	0
+1543	37	27	0	1
+1544	38	27	1	0
+1545	39	27	0	1
+1546	40	27	1	0
+1547	41	27	0	1
+1548	42	27	1	0
+1549	43	27	0	1
+1550	44	27	1	0
+1551	45	27	0	1
+1552	46	27	1	0
+1553	47	27	0	1
+1554	48	27	1	0
+1555	49	27	0	1
+1556	7	28	0	1
+1557	8	28	1	0
+1558	9	28	0	1
+1559	10	28	1	0
+1560	11	28	0	1
+1561	12	28	1	0
+1562	13	28	0	1
+1563	14	28	1	0
+1564	15	28	0	1
+1565	16	28	1	0
+1566	17	28	0	1
+1567	18	28	1	0
+1568	19	28	0	1
+1569	20	28	1	0
+1570	21	28	0	1
+1571	22	28	1	0
+1572	23	28	0	1
+1573	24	28	1	0
+1574	25	28	0	1
+1575	26	28	1	0
+1576	27	28	0	1
+1577	28	28	1	0
+1578	29	28	0	1
+1579	30	28	1	0
+1580	31	28	0	1
+1581	32	28	1	0
+1582	33	28	0	1
+1583	34	28	1	0
+1584	35	28	0	1
+1585	36	28	1	0
+1586	37	28	0	1
+1587	38	28	1	0
+1588	39	28	0	1
+1589	40	28	1	0
+1590	41	28	0	1
+1591	42	28	1	0
+1592	43	28	0	1
+1593	44	28	1	0
+1594	45	28	0	1
+1595	46	28	1	0
+1596	47	28	0	1
+1597	48	28	1	0
+1598	49	28	0	1
+1599	7	29	0	1
+1600	8	29	1	0
+1601	9	29	0	1
+1602	10	29	1	0
+1603	11	29	0	1
+1604	12	29	1	0
+1605	13	29	0	1
+1606	14	29	1	0
+1607	15	29	0	1
+1608	16	29	1	0
+1609	17	29	0	1
+1610	18	29	1	0
+1611	19	29	0	1
+1612	20	29	1	0
+1613	21	29	0	1
+1614	22	29	1	0
+1615	23	29	0	1
+1616	24	29	1	0
+1617	25	29	0	1
+1618	26	29	1	0
+1619	27	29	0	1
+1620	28	29	1	0
+1621	29	29	0	1
+1622	30	29	1	0
+1623	31	29	0	1
+1624	32	29	1	0
+1625	33	29	0	1
+1626	34	29	1	0
+1627	35	29	0	1
+1628	36	29	1	0
+1629	37	29	0	1
+1630	38	29	1	0
+1631	39	29	0	1
+1632	40	29	1	0
+1633	41	29	0	1
+1634	42	29	1	0
+1635	43	29	0	1
+1636	44	29	1	0
+1637	45	29	0	1
+1638	46	29	1	0
+1639	47	29	0	1
+1640	48	29	1	0
+1641	49	29	0	1
+1642	7	30	0	1
+1643	8	30	1	0
+1644	9	30	0	1
+1645	10	30	1	0
+1646	11	30	0	1
+1647	12	30	1	0
+1648	13	30	0	1
+1649	14	30	1	0
+1650	15	30	0	1
+1651	16	30	1	0
+1652	17	30	0	1
+1653	18	30	1	0
+1654	19	30	0	1
+1655	20	30	1	0
+1656	21	30	0	1
+1657	22	30	1	0
+1658	23	30	0	1
+1659	24	30	1	0
+1660	25	30	0	1
+1661	26	30	1	0
+1662	27	30	0	1
+1663	28	30	1	0
+1664	29	30	0	1
+1665	30	30	1	0
+1666	31	30	0	1
+1667	32	30	1	0
+1668	33	30	0	1
+1669	34	30	1	0
+1670	35	30	0	1
+1671	36	30	1	0
+1672	37	30	0	1
+1673	38	30	1	0
+1674	39	30	0	1
+1675	40	30	1	0
+1676	41	30	0	1
+1677	42	30	1	0
+1678	43	30	0	1
+1679	44	30	1	0
+1680	45	30	0	1
+1681	46	30	1	0
+1682	47	30	0	1
+1683	48	30	1	0
+1684	49	30	0	1
+1685	7	31	0	1
+1686	8	31	1	0
+1687	9	31	0	1
+1688	10	31	1	0
+1689	11	31	0	1
+1690	12	31	1	0
+1691	13	31	0	1
+1692	14	31	1	0
+1693	15	31	0	1
+1694	16	31	1	0
+1695	17	31	0	1
+1696	18	31	1	0
+1697	19	31	0	1
+1698	20	31	1	0
+1699	21	31	0	1
+1700	22	31	1	0
+1701	23	31	0	1
+1702	24	31	1	0
+1703	25	31	0	1
+1704	26	31	1	0
+1705	27	31	0	1
+1706	28	31	1	0
+1707	29	31	0	1
+1708	30	31	1	0
+1709	31	31	0	1
+1710	32	31	1	0
+1711	33	31	0	1
+1712	34	31	1	0
+1713	35	31	0	1
+1714	36	31	1	0
+1715	37	31	0	1
+1716	38	31	1	0
+1717	39	31	0	1
+1718	40	31	1	0
+1719	41	31	0	1
+1720	42	31	1	0
+1721	43	31	0	1
+1722	44	31	1	0
+1723	45	31	0	1
+1724	46	31	1	0
+1725	47	31	0	1
+1726	48	31	1	0
+1727	49	31	0	1
+1728	7	32	0	1
+1729	8	32	1	0
+1730	9	32	0	1
+1731	10	32	1	0
+1732	11	32	0	1
+1733	12	32	1	0
+1734	13	32	0	1
+1735	14	32	1	0
+1736	15	32	0	1
+1737	16	32	1	0
+1738	17	32	0	1
+1739	18	32	1	0
+1740	19	32	0	1
+1741	20	32	1	0
+1742	21	32	0	1
+1743	22	32	1	0
+1744	23	32	0	1
+1745	24	32	1	0
+1746	25	32	0	1
+1747	26	32	1	0
+1748	27	32	0	1
+1749	28	32	1	0
+1750	29	32	0	1
+1751	30	32	1	0
+1752	31	32	0	1
+1753	32	32	1	0
+1754	33	32	0	1
+1755	34	32	1	0
+1756	35	32	0	1
+1757	36	32	1	0
+1758	37	32	0	1
+1759	38	32	1	0
+1760	39	32	0	1
+1761	40	32	1	0
+1762	41	32	0	1
+1763	42	32	1	0
+1764	43	32	0	1
+1765	44	32	1	0
+1766	45	32	0	1
+1767	46	32	1	0
+1768	47	32	0	1
+1769	48	32	1	0
+1770	49	32	0	1
+1771	7	33	0	1
+1772	8	33	1	0
+1773	9	33	0	1
+1774	10	33	1	0
+1775	11	33	0	1
+1776	12	33	1	0
+1777	13	33	0	1
+1778	14	33	1	0
+1779	15	33	0	1
+1780	16	33	1	0
+1781	17	33	0	1
+1782	18	33	1	0
+1783	19	33	0	1
+1784	20	33	1	0
+1785	21	33	0	1
+1786	22	33	1	0
+1787	23	33	0	1
+1788	24	33	1	0
+1789	25	33	0	1
+1790	26	33	1	0
+1791	27	33	0	1
+1792	28	33	1	0
+1793	29	33	0	1
+1794	30	33	1	0
+1795	31	33	0	1
+1796	32	33	1	0
+1797	33	33	0	1
+1798	34	33	1	0
+1799	35	33	0	1
+1800	36	33	1	0
+1801	37	33	0	1
+1802	38	33	1	0
+1803	39	33	0	1
+1804	40	33	1	0
+1805	41	33	0	1
+1806	42	33	1	0
+1807	43	33	0	1
+1808	44	33	1	0
+1809	45	33	0	1
+1810	46	33	1	0
+1811	47	33	0	1
+1812	48	33	1	0
+1813	49	33	0	1
+1814	7	34	0	1
+1815	8	34	1	0
+1816	9	34	0	1
+1817	10	34	1	0
+1818	11	34	0	1
+1819	12	34	1	0
+1820	13	34	0	1
+1821	14	34	1	0
+1822	15	34	0	1
+1823	16	34	1	0
+1824	17	34	0	1
+1825	18	34	1	0
+1826	19	34	0	1
+1827	20	34	1	0
+1828	21	34	0	1
+1829	22	34	1	0
+1830	23	34	0	1
+1831	24	34	1	0
+1832	25	34	0	1
+1833	26	34	1	0
+1834	27	34	0	1
+1835	28	34	1	0
+1836	29	34	0	1
+1837	30	34	1	0
+1838	31	34	0	1
+1839	32	34	1	0
+1840	33	34	0	1
+1841	34	34	1	0
+1842	35	34	0	1
+1843	36	34	1	0
+1844	37	34	0	1
+1845	38	34	1	0
+1846	39	34	0	1
+1847	40	34	1	0
+1848	41	34	0	1
+1849	42	34	1	0
+1850	43	34	0	1
+1851	44	34	1	0
+1852	45	34	0	1
+1853	46	34	1	0
+1854	47	34	0	1
+1855	48	34	1	0
+1856	49	34	0	1
+1857	7	35	0	1
+1858	8	35	1	0
+1859	9	35	0	1
+1860	10	35	1	0
+1861	11	35	0	1
+1862	12	35	1	0
+1863	13	35	0	1
+1864	14	35	1	0
+1865	15	35	0	1
+1866	16	35	1	0
+1867	17	35	0	1
+1868	18	35	1	0
+1869	19	35	0	1
+1870	20	35	1	0
+1871	21	35	0	1
+1872	22	35	1	0
+1873	23	35	0	1
+1874	24	35	1	0
+1875	25	35	0	1
+1876	26	35	1	0
+1877	27	35	0	1
+1878	28	35	1	0
+1879	29	35	0	1
+1880	30	35	1	0
+1881	31	35	0	1
+1882	32	35	1	0
+1883	33	35	0	1
+1884	34	35	1	0
+1885	35	35	0	1
+1886	36	35	1	0
+1887	37	35	0	1
+1888	38	35	1	0
+1889	39	35	0	1
+1890	40	35	1	0
+1891	41	35	0	1
+1892	42	35	1	0
+1893	43	35	0	1
+1894	44	35	1	0
+1895	45	35	0	1
+1896	46	35	1	0
+1897	47	35	0	1
+1898	48	35	1	0
+1899	49	35	0	1
+1900	7	36	0	1
+1901	8	36	1	0
+1902	9	36	0	1
+1903	10	36	1	0
+1904	11	36	0	1
+1905	12	36	1	0
+1906	13	36	0	1
+1907	14	36	1	0
+1908	15	36	0	1
+1909	16	36	1	0
+1910	17	36	0	1
+1911	18	36	1	0
+1912	19	36	0	1
+1913	20	36	1	0
+1914	21	36	0	1
+1915	22	36	1	0
+1916	23	36	0	1
+1917	24	36	1	0
+1918	25	36	0	1
+1919	26	36	1	0
+1920	27	36	0	1
+1921	28	36	1	0
+1922	29	36	0	1
+1923	30	36	1	0
+1924	31	36	0	1
+1925	32	36	1	0
+1926	33	36	0	1
+1927	34	36	1	0
+1928	35	36	0	1
+1929	36	36	1	0
+1930	37	36	0	1
+1931	38	36	1	0
+1932	39	36	0	1
+1933	40	36	1	0
+1934	41	36	0	1
+1935	42	36	1	0
+1936	43	36	0	1
+1937	44	36	1	0
+1938	45	36	0	1
+1939	46	36	1	0
+1940	47	36	0	1
+1941	48	36	1	0
+1942	49	36	0	1
+1943	7	37	0	1
+1944	8	37	1	0
+1945	9	37	0	1
+1946	10	37	1	0
+1947	11	37	0	1
+1948	12	37	1	0
+1949	13	37	0	1
+1950	14	37	1	0
+1951	15	37	0	1
+1952	16	37	1	0
+1953	17	37	0	1
+1954	18	37	1	0
+1955	19	37	0	1
+1956	20	37	1	0
+1957	21	37	0	1
+1958	22	37	1	0
+1959	23	37	0	1
+1960	24	37	1	0
+1961	25	37	0	1
+1962	26	37	1	0
+1963	27	37	0	1
+1964	28	37	1	0
+1965	29	37	0	1
+1966	30	37	1	0
+1967	31	37	0	1
+1968	32	37	1	0
+1969	33	37	0	1
+1970	34	37	1	0
+1971	35	37	0	1
+1972	36	37	1	0
+1973	37	37	0	1
+1974	38	37	1	0
+1975	39	37	0	1
+1976	40	37	1	0
+1977	41	37	0	1
+1978	42	37	1	0
+1979	43	37	0	1
+1980	44	37	1	0
+1981	45	37	0	1
+1982	46	37	1	0
+1983	47	37	0	1
+1984	48	37	1	0
+1985	49	37	0	1
+1986	7	38	0	1
+1987	8	38	1	0
+1988	9	38	0	1
+1989	10	38	1	0
+1990	11	38	0	1
+1991	12	38	1	0
+1992	13	38	0	1
+1993	14	38	1	0
+1994	15	38	0	1
+1995	16	38	1	0
+1996	17	38	0	1
+1997	18	38	1	0
+1998	19	38	0	1
+1999	20	38	1	0
+2000	21	38	0	1
+2001	22	38	1	0
+2002	23	38	0	1
+2003	24	38	1	0
+2004	25	38	0	1
+2005	26	38	1	0
+2006	27	38	0	1
+2007	28	38	1	0
+2008	29	38	0	1
+2009	30	38	1	0
+2010	31	38	0	1
+2011	32	38	1	0
+2012	33	38	0	1
+2013	34	38	1	0
+2014	35	38	0	1
+2015	36	38	1	0
+2016	37	38	0	1
+2017	38	38	1	0
+2018	39	38	0	1
+2019	40	38	1	0
+2020	41	38	0	1
+2021	42	38	1	0
+2022	43	38	0	1
+2023	44	38	1	0
+2024	45	38	0	1
+2025	46	38	1	0
+2026	47	38	0	1
+2027	48	38	1	0
+2028	49	38	0	1
+2029	7	39	0	1
+2030	8	39	1	0
+2031	9	39	0	1
+2032	10	39	1	0
+2033	11	39	0	1
+2034	12	39	1	0
+2035	13	39	0	1
+2036	14	39	1	0
+2037	15	39	0	1
+2038	16	39	1	0
+2039	17	39	0	1
+2040	18	39	1	0
+2041	19	39	0	1
+2042	20	39	1	0
+2043	21	39	0	1
+2044	22	39	1	0
+2045	23	39	0	1
+2046	24	39	1	0
+2047	25	39	0	1
+2048	26	39	1	0
+2049	27	39	0	1
+2050	28	39	1	0
+2051	29	39	0	1
+2052	30	39	1	0
+2053	31	39	0	1
+2054	32	39	1	0
+2055	33	39	0	1
+2056	34	39	1	0
+2057	35	39	0	1
+2058	36	39	1	0
+2059	37	39	0	1
+2060	38	39	1	0
+2061	39	39	0	1
+2062	40	39	1	0
+2063	41	39	0	1
+2064	42	39	1	0
+2065	43	39	0	1
+2066	44	39	1	0
+2067	45	39	0	1
+2068	46	39	1	0
+2069	47	39	0	1
+2070	48	39	1	0
+2071	49	39	0	1
+2072	7	40	0	1
+2073	8	40	1	0
+2074	9	40	0	1
+2075	10	40	1	0
+2076	11	40	0	1
+2077	12	40	1	0
+2078	13	40	0	1
+2079	14	40	1	0
+2080	15	40	0	1
+2081	16	40	1	0
+2082	17	40	0	1
+2083	18	40	1	0
+2084	19	40	0	1
+2085	20	40	1	0
+2086	21	40	0	1
+2087	22	40	1	0
+2088	23	40	0	1
+2089	24	40	1	0
+2090	25	40	0	1
+2091	26	40	1	0
+2092	27	40	0	1
+2093	28	40	1	0
+2094	29	40	0	1
+2095	30	40	1	0
+2096	31	40	0	1
+2097	32	40	1	0
+2098	33	40	0	1
+2099	34	40	1	0
+2100	35	40	0	1
+2101	36	40	1	0
+2102	37	40	0	1
+2103	38	40	1	0
+2104	39	40	0	1
+2105	40	40	1	0
+2106	41	40	0	1
+2107	42	40	1	0
+2108	43	40	0	1
+2109	44	40	1	0
+2110	45	40	0	1
+2111	46	40	1	0
+2112	47	40	0	1
+2113	48	40	1	0
+2114	49	40	0	1
+2115	7	41	0	1
+2116	8	41	1	0
+2117	9	41	0	1
+2118	10	41	1	0
+2119	11	41	0	1
+2120	12	41	1	0
+2121	13	41	0	1
+2122	14	41	1	0
+2123	15	41	0	1
+2124	16	41	1	0
+2125	17	41	0	1
+2126	18	41	1	0
+2127	19	41	0	1
+2128	20	41	1	0
+2129	21	41	0	1
+2130	22	41	1	0
+2131	23	41	0	1
+2132	24	41	1	0
+2133	25	41	0	1
+2134	26	41	1	0
+2135	27	41	0	1
+2136	28	41	1	0
+2137	29	41	0	1
+2138	30	41	1	0
+2139	31	41	0	1
+2140	32	41	1	0
+2141	33	41	0	1
+2142	34	41	1	0
+2143	35	41	0	1
+2144	36	41	1	0
+2145	37	41	0	1
+2146	38	41	1	0
+2147	39	41	0	1
+2148	40	41	1	0
+2149	41	41	0	1
+2150	42	41	1	0
+2151	43	41	0	1
+2152	44	41	1	0
+2153	45	41	0	1
+2154	46	41	1	0
+2155	47	41	0	1
+2156	48	41	1	0
+2157	49	41	0	1
+2158	7	42	0	1
+2159	8	42	1	0
+2160	9	42	0	1
+2161	10	42	1	0
+2162	11	42	0	1
+2163	12	42	1	0
+2164	13	42	0	1
+2165	14	42	1	0
+2166	15	42	0	1
+2167	16	42	1	0
+2168	17	42	0	1
+2169	18	42	1	0
+2170	19	42	0	1
+2171	20	42	1	0
+2172	21	42	0	1
+2173	22	42	1	0
+2174	23	42	0	1
+2175	24	42	1	0
+2176	25	42	0	1
+2177	26	42	1	0
+2178	27	42	0	1
+2179	28	42	1	0
+2180	29	42	0	1
+2181	30	42	1	0
+2182	31	42	0	1
+2183	32	42	1	0
+2184	33	42	0	1
+2185	34	42	1	0
+2186	35	42	0	1
+2187	36	42	1	0
+2188	37	42	0	1
+2189	38	42	1	0
+2190	39	42	0	1
+2191	40	42	1	0
+2192	41	42	0	1
+2193	42	42	1	0
+2194	43	42	0	1
+2195	44	42	1	0
+2196	45	42	0	1
+2197	46	42	1	0
+2198	47	42	0	1
+2199	48	42	1	0
+2200	49	42	0	1
+2201	7	43	0	1
+2202	8	43	1	0
+2203	9	43	0	1
+2204	10	43	1	0
+2205	11	43	0	1
+2206	12	43	1	0
+2207	13	43	0	1
+2208	14	43	1	0
+2209	15	43	0	1
+2210	16	43	1	0
+2211	17	43	0	1
+2212	18	43	1	0
+2213	19	43	0	1
+2214	20	43	1	0
+2215	21	43	0	1
+2216	22	43	1	0
+2217	23	43	0	1
+2218	24	43	1	0
+2219	25	43	0	1
+2220	26	43	1	0
+2221	27	43	0	1
+2222	28	43	1	0
+2223	29	43	0	1
+2224	30	43	1	0
+2225	31	43	0	1
+2226	32	43	1	0
+2227	33	43	0	1
+2228	34	43	1	0
+2229	35	43	0	1
+2230	36	43	1	0
+2231	37	43	0	1
+2232	38	43	1	0
+2233	39	43	0	1
+2234	40	43	1	0
+2235	41	43	0	1
+2236	42	43	1	0
+2237	43	43	0	1
+2238	44	43	1	0
+2239	45	43	0	1
+2240	46	43	1	0
+2241	47	43	0	1
+2242	48	43	1	0
+2243	49	43	0	1
+2244	7	44	0	1
+2245	8	44	1	0
+2246	9	44	0	1
+2247	10	44	1	0
+2248	11	44	0	1
+2249	12	44	1	0
+2250	13	44	0	1
+2251	14	44	1	0
+2252	15	44	0	1
+2253	16	44	1	0
+2254	17	44	0	1
+2255	18	44	1	0
+2256	19	44	0	1
+2257	20	44	1	0
+2258	21	44	0	1
+2259	22	44	1	0
+2260	23	44	0	1
+2261	24	44	1	0
+2262	25	44	0	1
+2263	26	44	1	0
+2264	27	44	0	1
+2265	28	44	1	0
+2266	29	44	0	1
+2267	30	44	1	0
+2268	31	44	0	1
+2269	32	44	1	0
+2270	33	44	0	1
+2271	34	44	1	0
+2272	35	44	0	1
+2273	36	44	1	0
+2274	37	44	0	1
+2275	38	44	1	0
+2276	39	44	0	1
+2277	40	44	1	0
+2278	41	44	0	1
+2279	42	44	1	0
+2280	43	44	0	1
+2281	44	44	1	0
+2282	45	44	0	1
+2283	46	44	1	0
+2284	47	44	0	1
+2285	48	44	1	0
+2286	49	44	0	1
+2287	7	45	0	1
+2288	8	45	1	0
+2289	9	45	0	1
+2290	10	45	1	0
+2291	11	45	0	1
+2292	12	45	1	0
+2293	13	45	0	1
+2294	14	45	1	0
+2295	15	45	0	1
+2296	16	45	1	0
+2297	17	45	0	1
+2298	18	45	1	0
+2299	19	45	0	1
+2300	20	45	1	0
+2301	21	45	0	1
+2302	22	45	1	0
+2303	23	45	0	1
+2304	24	45	1	0
+2305	25	45	0	1
+2306	26	45	1	0
+2307	27	45	0	1
+2308	28	45	1	0
+2309	29	45	0	1
+2310	30	45	1	0
+2311	31	45	0	1
+2312	32	45	1	0
+2313	33	45	0	1
+2314	34	45	1	0
+2315	35	45	0	1
+2316	36	45	1	0
+2317	37	45	0	1
+2318	38	45	1	0
+2319	39	45	0	1
+2320	40	45	1	0
+2321	41	45	0	1
+2322	42	45	1	0
+2323	43	45	0	1
+2324	44	45	1	0
+2325	45	45	0	1
+2326	46	45	1	0
+2327	47	45	0	1
+2328	48	45	1	0
+2329	49	45	0	1
+\.
+
+
+--
+-- TOC entry 2246 (class 0 OID 0)
+-- Dependencies: 186
+-- Name: avaliacao_comentario_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('avaliacao_comentario_id_seq', 2329, true);
+
+
+--
+-- TOC entry 2214 (class 0 OID 17102)
+-- Dependencies: 187
+-- Data for Name: avaliacao_item; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY avaliacao_item (id, id_usuario, id_item, positiva, negativa) FROM stdin;
+2	2	1	1	0
+4	8	1	1	0
+5	9	1	0	1
+6	10	1	1	0
+7	11	1	0	1
+8	12	1	1	0
+9	13	1	0	1
+10	14	1	1	0
+11	15	1	0	1
+12	16	1	1	0
+13	17	1	0	1
+14	18	1	1	0
+15	19	1	0	1
+16	20	1	1	0
+17	21	1	0	1
+18	22	1	1	0
+19	23	1	0	1
+20	24	1	1	0
+21	25	1	0	1
+22	26	1	1	0
+23	27	1	0	1
+24	28	1	1	0
+25	29	1	0	1
+26	30	1	1	0
+27	31	1	0	1
+28	32	1	1	0
+29	33	1	0	1
+30	34	1	1	0
+31	35	1	0	1
+32	36	1	1	0
+33	37	1	0	1
+34	38	1	1	0
+35	39	1	0	1
+36	40	1	1	0
+37	41	1	0	1
+38	42	1	1	0
+39	43	1	0	1
+40	44	1	1	0
+41	45	1	0	1
+42	46	1	1	0
+43	47	1	0	1
+44	48	1	1	0
+45	49	1	0	1
+47	8	2	1	0
+48	9	2	0	1
+49	10	2	1	0
+50	11	2	0	1
+51	12	2	1	0
+52	13	2	0	1
+53	14	2	1	0
+54	15	2	0	1
+55	16	2	1	0
+56	17	2	0	1
+57	18	2	1	0
+58	19	2	0	1
+59	20	2	1	0
+60	21	2	0	1
+61	22	2	1	0
+62	23	2	0	1
+63	24	2	1	0
+64	25	2	0	1
+65	26	2	1	0
+66	27	2	0	1
+67	28	2	1	0
+68	29	2	0	1
+69	30	2	1	0
+70	31	2	0	1
+71	32	2	1	0
+72	33	2	0	1
+73	34	2	1	0
+74	35	2	0	1
+75	36	2	1	0
+76	37	2	0	1
+77	38	2	1	0
+78	39	2	0	1
+79	40	2	1	0
+80	41	2	0	1
+81	42	2	1	0
+82	43	2	0	1
+83	44	2	1	0
+84	45	2	0	1
+85	46	2	1	0
+86	47	2	0	1
+87	48	2	1	0
+88	49	2	0	1
+89	62	1	1	0
+90	62	2	0	1
+91	62	3	1	0
+92	62	4	0	1
+\.
+
+
+--
+-- TOC entry 2247 (class 0 OID 0)
+-- Dependencies: 188
+-- Name: avaliacao_item_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('avaliacao_item_id_seq', 92, true);
+
+
+--
+-- TOC entry 2227 (class 0 OID 41686)
+-- Dependencies: 200
+-- Data for Name: categoria; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY categoria (id_categoria, categoria) FROM stdin;
+1	Categoria DCC
+2	DCC - 2018
+3	OO2018
+\.
+
+
+--
+-- TOC entry 2248 (class 0 OID 0)
+-- Dependencies: 199
+-- Name: categoria_id_categoria_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('categoria_id_categoria_seq', 3, true);
+
+
+--
+-- TOC entry 2249 (class 0 OID 0)
+-- Dependencies: 197
+-- Name: categoria_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('categoria_id_seq', 1, true);
+
+
+--
+-- TOC entry 2216 (class 0 OID 17107)
+-- Dependencies: 189
+-- Data for Name: comentario; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY comentario (id, id_usuario, id_item, comentario, data_criacao, data_atualizacao) FROM stdin;
+1	2	1	tESTE	2018-07-11 15:26:02.197	2018-07-11 15:26:05.122
+2	7	1	testando	2018-07-12 14:50:43.618	2018-07-12 14:50:46.633
+3	7	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+4	8	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+5	9	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+6	10	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+7	11	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+8	12	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+9	13	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+10	14	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+11	15	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+12	16	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+13	17	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+14	18	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+15	19	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+16	20	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+17	21	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+18	22	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+19	23	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+20	24	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+21	25	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+22	26	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+23	27	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+24	28	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+25	29	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+26	30	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+27	31	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+28	32	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+29	33	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+30	34	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+31	35	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+32	36	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+33	37	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+34	38	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+35	39	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+36	40	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+37	41	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+38	42	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+39	43	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+40	44	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+41	45	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+42	46	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+43	47	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+44	48	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+45	49	2	Testando ComentÃ¡rios	2018-07-13 11:32:29.972377	2018-07-13 11:32:29.972377
+51	62	1	Muito Interessante	2018-07-18 00:18:03.96336	2018-07-18 00:18:03.96336
+\.
+
+
+--
+-- TOC entry 2250 (class 0 OID 0)
+-- Dependencies: 190
+-- Name: comentario_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('comentario_id_seq', 51, true);
+
+
+--
+-- TOC entry 2229 (class 0 OID 41699)
+-- Dependencies: 202
+-- Data for Name: configuracao; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY configuracao (id, chave, valor) FROM stdin;
+1	senha	W88UX#e\\{~R.tg3pmE
+\.
+
+
+--
+-- TOC entry 2251 (class 0 OID 0)
+-- Dependencies: 201
+-- Name: configuracao_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('configuracao_id_seq', 1, true);
+
+
+--
+-- TOC entry 2218 (class 0 OID 17115)
+-- Dependencies: 191
+-- Data for Name: item; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY item (id, id_usuario, titulo, descricao, data_criacao, data_atualizacao) FROM stdin;
+2	1	teste 2	teste 2	2018-07-11 15:09:55.665328	2018-07-11 15:09:55.665328
+1	1	teste 1	teste 1	2018-07-15 22:07:21.320475	2018-07-11 15:09:29.149346
+4	7	Item 5	teste	2018-07-17 01:40:19.388583	2018-07-17 01:40:19.388583
+6	62	Item 5	Tem mais	2018-07-17 21:48:09.973269	2018-07-17 21:48:09.973269
+3	7	Item 5	Item 5 é muito bom	2018-07-17 01:35:44.641779	2018-07-17 01:35:44.641779
+7	1	Evento 1	Isso é uma bosta	2018-11-27 20:33:01.553221	2018-11-27 20:33:01.553221
+\.
+
+
+--
+-- TOC entry 2225 (class 0 OID 41670)
+-- Dependencies: 198
+-- Data for Name: item_categoria; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY item_categoria (id, id_item, id_categoria) FROM stdin;
+1	7	2
+\.
+
+
+--
+-- TOC entry 2252 (class 0 OID 0)
+-- Dependencies: 192
+-- Name: item_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('item_id_seq', 7, true);
+
+
+--
+-- TOC entry 2220 (class 0 OID 17123)
+-- Dependencies: 193
+-- Data for Name: link; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY link (id, id_item, link) FROM stdin;
+1	1	http:/facebook.com
+2	1	www.globo.com
+3	3	www.item5.com.br
+4	4	teste
+6	6	http:/globo.com
+36	7	teste
+\.
+
+
+--
+-- TOC entry 2253 (class 0 OID 0)
+-- Dependencies: 194
+-- Name: link_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('link_id_seq', 36, true);
+
+
+--
+-- TOC entry 2222 (class 0 OID 17131)
+-- Dependencies: 195
+-- Data for Name: usuario; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY usuario (id, nome, email, login, senha) FROM stdin;
+7	Teste\r\nteste\r\nTeste	teste7@gmail.com	PJ7	827ccb0eea8a706c4c34a16891f84e7b
+1	João	teste1@gmail.com	JP1	698dc19d489c4e4db73e28a713eab07b
+2	Carlos	teste2@gmail.com	JP2	698dc19d489c4e4db73e28a713eab07b
+3	Fernanda	teste3@gmail.com	PJ3	698dc19d489c4e4db73e28a713eab07b
+11	teste3	teste11@gmail.com	teste11	698dc19d489c4e4db73e28a713eab07b
+13	teste5	teste13@gmail.com	teste13	698dc19d489c4e4db73e28a713eab07b
+14	teste6	teste14@gmail.com	teste14	698dc19d489c4e4db73e28a713eab07b
+29	teste0	teste29@gmail.com	teste29	698dc19d489c4e4db73e28a713eab07b
+31	teste2	teste31@gmail.com	teste31	698dc19d489c4e4db73e28a713eab07b
+33	teste4	teste33@gmail.com	teste33	698dc19d489c4e4db73e28a713eab07b
+36	teste7	teste36@gmail.com	teste36	698dc19d489c4e4db73e28a713eab07b
+37	teste8	teste37@gmail.com	teste37	698dc19d489c4e4db73e28a713eab07b
+38	teste9	teste38@gmail.com	teste38	698dc19d489c4e4db73e28a713eab07b
+39	teste10	teste39@gmail.com	teste39	698dc19d489c4e4db73e28a713eab07b
+40	teste11	teste40@gmail.com	teste40	698dc19d489c4e4db73e28a713eab07b
+41	teste12	teste41@gmail.com	teste41	698dc19d489c4e4db73e28a713eab07b
+42	teste13	teste42@gmail.com	teste42	698dc19d489c4e4db73e28a713eab07b
+43	teste14	teste43@gmail.com	teste43	698dc19d489c4e4db73e28a713eab07b
+44	teste15	teste44@gmail.com	teste44	698dc19d489c4e4db73e28a713eab07b
+45	teste16	teste45@gmail.com	teste45	698dc19d489c4e4db73e28a713eab07b
+46	teste17	teste46@gmail.com	teste46	698dc19d489c4e4db73e28a713eab07b
+47	teste18	teste47@gmail.com	teste47	698dc19d489c4e4db73e28a713eab07b
+48	teste19	teste48@gmail.com	teste48	698dc19d489c4e4db73e28a713eab07b
+49	teste20	teste49@gmail.com	teste49	698dc19d489c4e4db73e28a713eab07b
+18	teste100	teste18@gmail.com	teste18	698dc19d489c4e4db73e28a713eab07b
+22	teste140	teste22@gmail.com	teste22	698dc19d489c4e4db73e28a713eab07b
+28	teste200	teste28@gmail.com	teste28	698dc19d489c4e4db73e28a713eab07b
+32	teste354	teste32@gmail.com	teste32	698dc19d489c4e4db73e28a713eab07b
+12	teste451	teste12@gmail.com	teste12	698dc19d489c4e4db73e28a713eab07b
+34	teste561	teste34@gmail.com	teste34	698dc19d489c4e4db73e28a713eab07b
+35	teste614	teste35@gmail.com	teste35	698dc19d489c4e4db73e28a713eab07b
+15	teste714	teste15@gmail.com	teste15	698dc19d489c4e4db73e28a713eab07b
+16	teste81	teste16@gmail.com	teste16	698dc19d489c4e4db73e28a713eab07b
+17	teste94	teste17@gmail.com	teste17	698dc19d489c4e4db73e28a713eab07b
+10	teste277	teste10@gmail.com	teste10	698dc19d489c4e4db73e28a713eab07b
+27	teste196	teste27@gmail.com	teste27	698dc19d489c4e4db73e28a713eab07b
+26	teste181	teste26@gmail.com	teste26	698dc19d489c4e4db73e28a713eab07b
+25	teste175	teste25@gmail.com	teste25	698dc19d489c4e4db73e28a713eab07b
+24	teste162	teste24@gmail.com	teste24	698dc19d489c4e4db73e28a713eab07b
+23	teste158	teste23@gmail.com	teste23	698dc19d489c4e4db73e28a713eab07b
+21	teste137	teste21@gmail.com	teste21	698dc19d489c4e4db73e28a713eab07b
+20	teste122	teste20@gmail.com	teste20	698dc19d489c4e4db73e28a713eab07b
+19	teste112	teste19@gmail.com	teste19	698dc19d489c4e4db73e28a713eab07b
+9	teste147	teste9@gmail.com	teste9	698dc19d489c4e4db73e28a713eab07b
+30	teste1587	teste30@gmail.com	teste30	698dc19d489c4e4db73e28a713eab07b
+8	teste014	teste8@gmail.com	teste8	698dc19d489c4e4db73e28a713eab07b
+50	Renato Silva	diasjp1997@gmail.com	RENATO	1a4f5953d09581f1b5027763cbd0736c
+53	Yuri	yuri@gmail.com	YURI	1a4f5953d09581f1b5027763cbd0736c
+54	Yuri	yuri@gmail.com	YURI	1a4f5953d09581f1b5027763cbd0736c
+57	DENISE	DENISE@GMAIL.COM	DENISE	827ccb0eea8a706c4c34a16891f84e7b
+59	GUILHERME	GUILHERME@GMAIL.COM	GUI	827ccb0eea8a706c4c34a16891f84e7b
+60	GUILHERME	GUILHERME1@GMAIL.COM	GUI2	827ccb0eea8a706c4c34a16891f84e7b
+62	Carlos	carlos@gmail.com	carlos	827ccb0eea8a706c4c34a16891f84e7b
+64	Carlos1	carlos1@gmail.com	carlos1	827ccb0eea8a706c4c34a16891f84e7b
+65	PedroFF	Pedroff@gmail.com	PedroFF	827ccb0eea8a706c4c34a16891f84e7b
+66	Pedro	Pedro@gmail.com	pedro	827ccb0eea8a706c4c34a16891f84e7b
+\.
+
+
+--
+-- TOC entry 2254 (class 0 OID 0)
+-- Dependencies: 196
+-- Name: usuario_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('usuario_id_seq', 66, true);
+
+
+--
+-- TOC entry 2068 (class 2606 OID 17146)
+-- Name: avaliacao_comentario avaliacao_comentario_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY avaliacao_comentario
+    ADD CONSTRAINT avaliacao_comentario_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2070 (class 2606 OID 17148)
+-- Name: avaliacao_item avaliacao_item_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY avaliacao_item
+    ADD CONSTRAINT avaliacao_item_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2080 (class 2606 OID 41678)
+-- Name: item_categoria categoria_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY item_categoria
+    ADD CONSTRAINT categoria_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2082 (class 2606 OID 41691)
+-- Name: categoria categoria_pkey1; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY categoria
+    ADD CONSTRAINT categoria_pkey1 PRIMARY KEY (id_categoria);
+
+
+--
+-- TOC entry 2072 (class 2606 OID 17150)
+-- Name: comentario comentario_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY comentario
+    ADD CONSTRAINT comentario_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2084 (class 2606 OID 41704)
+-- Name: configuracao configuracao_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY configuracao
+    ADD CONSTRAINT configuracao_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2074 (class 2606 OID 17152)
+-- Name: item item_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY item
+    ADD CONSTRAINT item_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2076 (class 2606 OID 17154)
+-- Name: link link_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY link
+    ADD CONSTRAINT link_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2078 (class 2606 OID 17156)
+-- Name: usuario usuario_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY usuario
+    ADD CONSTRAINT usuario_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2085 (class 2606 OID 17157)
+-- Name: avaliacao_comentario avaliacao_comentario_id_item_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY avaliacao_comentario
+    ADD CONSTRAINT avaliacao_comentario_id_item_fkey FOREIGN KEY (id_comentario) REFERENCES comentario(id);
+
+
+--
+-- TOC entry 2086 (class 2606 OID 17162)
+-- Name: avaliacao_comentario avaliacao_comentario_id_usuario_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY avaliacao_comentario
+    ADD CONSTRAINT avaliacao_comentario_id_usuario_fkey FOREIGN KEY (id_usuario) REFERENCES usuario(id);
+
+
+--
+-- TOC entry 2087 (class 2606 OID 17167)
+-- Name: avaliacao_item avaliacao_item_id_comentario_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY avaliacao_item
+    ADD CONSTRAINT avaliacao_item_id_comentario_fkey FOREIGN KEY (id_item) REFERENCES item(id);
+
+
+--
+-- TOC entry 2088 (class 2606 OID 17172)
+-- Name: avaliacao_item avaliacao_item_id_usuario_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY avaliacao_item
+    ADD CONSTRAINT avaliacao_item_id_usuario_fkey FOREIGN KEY (id_usuario) REFERENCES usuario(id);
+
+
+--
+-- TOC entry 2093 (class 2606 OID 41679)
+-- Name: item_categoria categoria_id_item_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY item_categoria
+    ADD CONSTRAINT categoria_id_item_fkey FOREIGN KEY (id_item) REFERENCES item(id);
+
+
+--
+-- TOC entry 2089 (class 2606 OID 17177)
+-- Name: comentario comentario_id_item_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY comentario
+    ADD CONSTRAINT comentario_id_item_fkey FOREIGN KEY (id_item) REFERENCES item(id);
+
+
+--
+-- TOC entry 2090 (class 2606 OID 17182)
+-- Name: comentario comentario_id_usuario_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY comentario
+    ADD CONSTRAINT comentario_id_usuario_fkey FOREIGN KEY (id_usuario) REFERENCES usuario(id);
+
+
+--
+-- TOC entry 2094 (class 2606 OID 41692)
+-- Name: item_categoria item_categoria_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY item_categoria
+    ADD CONSTRAINT item_categoria_fk FOREIGN KEY (id_categoria) REFERENCES categoria(id_categoria);
+
+
+--
+-- TOC entry 2091 (class 2606 OID 17187)
+-- Name: item item_id_usuario_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY item
+    ADD CONSTRAINT item_id_usuario_fkey FOREIGN KEY (id_usuario) REFERENCES usuario(id);
+
+
+--
+-- TOC entry 2092 (class 2606 OID 17192)
+-- Name: link link_id_item_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY link
+    ADD CONSTRAINT link_id_item_fkey FOREIGN KEY (id_item) REFERENCES item(id);
+
+
+-- Completed on 2018-11-27 21:58:56
+
+--
+-- PostgreSQL database dump complete
+--
+
