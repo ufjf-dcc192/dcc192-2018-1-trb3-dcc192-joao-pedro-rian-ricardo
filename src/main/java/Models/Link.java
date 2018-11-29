@@ -7,7 +7,7 @@ public class Link {
 
     private Integer id;
     private String link;
-    private Item item;
+    private transient Item item;
 
     public Link() {
     }

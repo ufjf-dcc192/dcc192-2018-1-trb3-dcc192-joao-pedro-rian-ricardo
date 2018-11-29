@@ -121,7 +121,9 @@ public class ItemDAO {
                 idItem = rs.getInt(1);
             }
             comando.close();
-            this.adicionarLinks(idItem, item.getLinks());
+            if (item.getLinks() != null) {
+                this.adicionarLinks(idItem, item.getLinks());
+            };
             this.adicionarCategorias(idItem, categorias);
         } catch (SQLException ex) {
             Logger.getLogger(ItemDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -142,7 +144,7 @@ public class ItemDAO {
             for (String categoria : categorias) {
                 this.adicionarCategoria(idItem, Integer.parseInt(categoria));
             }
-            
+
         }
     }
 

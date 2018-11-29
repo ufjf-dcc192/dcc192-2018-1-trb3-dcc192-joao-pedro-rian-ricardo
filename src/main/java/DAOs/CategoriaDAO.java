@@ -83,7 +83,7 @@ public class CategoriaDAO {
         return categoria;
     }
 
-    public List<Categoria> getAllCategoriaAndItens() throws SQLException {
+        public List<Categoria> getAllCategoriaAndItens() throws SQLException {
         List<Categoria> categorias = new ArrayList<>();
         try (PreparedStatement comando = conexao.prepareStatement(SQL_ALL_CATEGORIA)) {
             ResultSet resultado = comando.executeQuery();

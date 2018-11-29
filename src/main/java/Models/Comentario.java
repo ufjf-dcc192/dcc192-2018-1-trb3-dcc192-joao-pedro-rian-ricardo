@@ -12,7 +12,7 @@ public class Comentario {
     private LocalDateTime dataCriacao;
     private LocalDateTime dataAtualizacao;
     private Usuario usuario;
-    private Item item;
+    private transient Item item;
     private List<AvaliacaoComentario> avaliacoes;
     private Integer totalPositivas;
     private Integer totalNegativas;
