@@ -2,8 +2,9 @@ var addCols = function (categorias) {
     var getUrl = window.location;
     var baseUrl = getUrl.protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1];
     for (let i = 0; i < categorias.length; i++) {
-        let categoria = $('<div class="col-lg-12"><h4>Categoria: '+categorias[i].categoria+'</h4></div>');
-        if (categorias[i].itens.length>0) {
+        let divCategoria = $('<div class="col-lg-12 row container-fluid border border-success"></div>');
+        let categoria = $('<div class="col-lg-12"><h4>Categoria: ' + categorias[i].categoria + '</h4></div>');
+        if (categorias[i].itens.length > 0) {
             let itens = categorias[i].itens;
             for (let i = 0; i < itens.length; i++) {
                 let botaoEnvio = document.createElement('button');
@@ -24,18 +25,20 @@ var addCols = function (categorias) {
                         + '</div>'
                         + '</div>');
 
-                
+
                 myPanel.appendTo(myCol);
-                categoria.appendTo('#categorias');
-                myCol.appendTo('#categorias');
-                document.getElementById("body" + i).append(botaoEnvio);
+                categoria.appendTo(divCategoria);
+                myCol.appendTo(divCategoria);
+                if (document.getElementById("body" + i) !== null) {
+                    document.getElementById("body" + i).append(botaoEnvio);
+                }
             }
-        }else{
-             let mensagem = $('<div class="col-lg-12"><h4>Não jogos cadastrados nessa categoria</h4></div>');
-             categoria.appendTo('#categorias');
-             mensagem.appendTo('#categorias');
+        } else {
+            let mensagem = $('<div class="col-lg-12"><h4>Não jogos cadastrados nessa categoria</h4></div>');
+            categoria.appendTo(divCategoria);
+            mensagem.appendTo(divCategoria);
         }
-       
+        divCategoria.appendTo("#categorias");
     }
 };
 
