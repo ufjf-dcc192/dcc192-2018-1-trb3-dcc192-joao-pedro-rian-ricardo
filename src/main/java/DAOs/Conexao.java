@@ -22,7 +22,7 @@ public class Conexao {
     private static Connection ConexaoOffline() throws SQLException, ClassNotFoundException {
         String driver = "org.postgresql.Driver";
         String user = "postgres";
-        String senha = "12345";
+        String senha = "senha";
         String url = "jdbc:postgresql://localhost:5432/curadoria";
         Class.forName(driver);
         Connection conexao = (Connection) DriverManager.getConnection(url, user, senha);

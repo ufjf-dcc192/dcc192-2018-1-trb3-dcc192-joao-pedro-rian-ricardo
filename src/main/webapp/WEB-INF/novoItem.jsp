@@ -29,7 +29,7 @@
             <select class="form-control" multiple="multiple" name="tags" id="tags">
             </select>
             <br/>
-            <label>Informe o link e clique em adicionar:</label>
+           <!-- <label>Informe o link e clique em adicionar:</label>
             <div class="input-group">
                 <input class="form-control" type="text" placeholder="Insira aqui o link a ser vinculado ao item" id="link"/><br/>
                 <span class="input-group-btn">
@@ -41,6 +41,7 @@
             <select class="form-control" multiple="multiple" name="links" id="links">
             </select>
             <br/>
+           -->
 
 
 

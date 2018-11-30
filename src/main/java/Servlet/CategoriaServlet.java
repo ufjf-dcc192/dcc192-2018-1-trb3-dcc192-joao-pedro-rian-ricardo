@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Pedro
  */
-@WebServlet(name = "CategoriaServlet", urlPatterns = {"/categorias.html", "/editarCategoria.html", "/novaCategoria.html", "/sessionTags.html"})
+@WebServlet(name = "CategoriaServlet", urlPatterns = {"/categorias.html", "/editarCategoria.html", "/novaCategoria.html", "/sessionTags.html", "/categoria-ranking.html"})
 public class CategoriaServlet extends HttpServlet {
 
     @Override
@@ -36,6 +36,7 @@ public class CategoriaServlet extends HttpServlet {
             rotas.put("/editarCategoria.html", "Comandos.EditarCategoriaCommand");
             rotas.put("/novaCategoria.html", "Comandos.RegistroCategoriaCommand");
             rotas.put("/sessionTags.html", "Comandos.SessionTagsCommand");
+            rotas.put("/categoria-ranking.html", "Comandos.CategoriaDetalheRankingCommand");
 
             String clazzName = rotas.get(request.getServletPath());
 

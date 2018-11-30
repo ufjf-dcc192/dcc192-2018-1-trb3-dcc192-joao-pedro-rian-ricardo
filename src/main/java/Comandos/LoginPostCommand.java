@@ -31,11 +31,10 @@ public class LoginPostCommand implements Comando {
                
                 request.getSession().setAttribute("usuarioID", usuario.getId());
                 request.getSession().setAttribute("usuarioCompleto", usuario);
-                request.setAttribute("categorias", CategoriaDAO.getInstance().getAllCategoriaAndItens());
                 IndexCommand comando = new IndexCommand();
                 comando.exec(request, response);
             }
-        } catch (ServletException | IOException | SQLException ex) {
+        } catch (ServletException | IOException ex) {
             Logger.getLogger(LoginPostCommand.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

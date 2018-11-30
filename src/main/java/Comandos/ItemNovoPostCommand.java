@@ -22,13 +22,13 @@ public class ItemNovoPostCommand implements Comando {
         try {
             request.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            String[] values = request.getParameterValues("links");
+           /* String[] values = request.getParameterValues("links");*/
             String[] categorias = request.getParameterValues("tags");
-            List<Link> links = Link.StringToListLink(values);
+            /*List<Link> links = Link.StringToListLink(values);*/
             Item item = new Item();
             item.setTitulo(request.getParameter("titulo"));
             item.setDescricao(request.getParameter("descricao"));
-            item.setLinks(links);
+            /*item.setLinks(links);*/
             item.setUsuario((Usuario)request.getSession().getAttribute("usuarioCompleto"));
             ItemDAO.getInstance().adicionarItem(item,categorias);
             response.sendRedirect("item-listar.html?cadastrado=true");

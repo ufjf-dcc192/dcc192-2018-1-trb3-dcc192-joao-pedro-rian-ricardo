@@ -5,7 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.List;
 
-public class Item {
+public class Item implements Comparable<Item>{
     private Integer id;
     private String titulo;
     private String descricao;
@@ -145,5 +145,16 @@ public class Item {
     
     public String getStringDataCriacao(){
         return this.dataCriacao.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM));
+    }
+
+    @Override
+    public int compareTo(Item t) {
+        if(this.avaliacaofinal>t.getAvaliacaofinal()){
+            return -1;
+        }
+        if(this.avaliacaofinal<t.getAvaliacaofinal()){
+            return 1;
+        }
+        return 0;
     }
 }

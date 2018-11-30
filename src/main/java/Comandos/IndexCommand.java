@@ -1,5 +1,6 @@
 package Comandos;
 
+import DAOs.CategoriaDAO;
 import DAOs.UsuarioDAO;
 import Models.Usuario;
 import com.google.gson.Gson;
@@ -24,12 +25,13 @@ public class IndexCommand implements Comando {
         try {
             if (idUsuario != null) {
                 request.setAttribute("usuario", usuario);
+                request.setAttribute("categorias", CategoriaDAO.getInstance().getAllCategoriaAndItens());
                 RequestDispatcher despachante = request.getRequestDispatcher("/WEB-INF/inicial.jsp");
                 despachante.forward(request, response);
             } else {
                 response.sendRedirect("index.html");
             }
-        } catch (ServletException | IOException ex) {
+        } catch (ServletException | IOException | SQLException ex) {
             Logger.getLogger(IndexCommand.class.getName()).log(Level.SEVERE, null, ex);
         }
 
