@@ -85,7 +85,7 @@ public class CategoriaDAO {
         return categoria;
     }
 
-        public List<Categoria> getAllCategoriaAndItens() throws SQLException {
+    public List<Categoria> getAllCategoriaAndItens() throws SQLException {
         List<Categoria> categorias = new ArrayList<>();
         try (PreparedStatement comando = conexao.prepareStatement(SQL_ALL_CATEGORIA)) {
             ResultSet resultado = comando.executeQuery();
@@ -99,6 +99,14 @@ public class CategoriaDAO {
             }
         }
         return categorias;
+    }
+
+    public Categoria getCategoriaAndItens(Integer id) throws SQLException {
+        Categoria categoria = null;
+        List<Item> itens = ItemDAO.getInstance().getItensByCategoria(id);
+        Collections.sort(itens);
+        categoria = this.getCategoriaById(id).setItens(itens);
+        return categoria;
     }
 
 }
