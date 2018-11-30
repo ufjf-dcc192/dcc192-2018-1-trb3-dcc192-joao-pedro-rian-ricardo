@@ -36,7 +36,7 @@ public class CategoriaServlet extends HttpServlet {
             rotas.put("/editarCategoria.html", "Comandos.EditarCategoriaCommand");
             rotas.put("/novaCategoria.html", "Comandos.RegistroCategoriaCommand");
             rotas.put("/sessionTags.html", "Comandos.SessionTagsCommand");
-            rotas.put("//categoria-ranking.html", "Comandos.CategoriaDetalheRankingCommand");
+            rotas.put("/categoria-ranking.html", "Comandos.CategoriaDetalheRankingCommand");
 
             String clazzName = rotas.get(request.getServletPath());
 

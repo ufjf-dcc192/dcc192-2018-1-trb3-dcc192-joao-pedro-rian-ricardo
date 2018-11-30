@@ -32,7 +32,7 @@
                     <div class="col"></div>
                     <div class="col">
                         <c:forEach var="categoria" items="${categorias}">
-                            <a href="categoria-ranking.html?idCategoria = ${categoria.id}" class="btn btn-primary btn-lg btn-block">${categoria.categoria}</a>
+                            <a href="categoria-ranking.html?idCategoria=${categoria.id}" class="btn btn-primary btn-lg btn-block">${categoria.categoria}</a>
 
                         </c:forEach>
                     </div>>
