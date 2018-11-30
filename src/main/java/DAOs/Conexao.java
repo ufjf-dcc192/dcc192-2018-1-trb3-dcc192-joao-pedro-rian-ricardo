@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class Conexao {
 
     public static Connection getConexao() throws SQLException, ClassNotFoundException {
-      boolean online = false;
+      boolean online = true;
       if(online){
           return ConexaoHeroku();
       }
@@ -21,8 +21,8 @@ public class Conexao {
 
     private static Connection ConexaoOffline() throws SQLException, ClassNotFoundException {
         String driver = "org.postgresql.Driver";
-        String user = "postgres";
-        String senha = "senha";
+        String user = "pedrofreitas";
+        String senha = "pfreitas02";
         String url = "jdbc:postgresql://localhost:5432/curadoria";
         Class.forName(driver);
         Connection conexao = (Connection) DriverManager.getConnection(url, user, senha);
