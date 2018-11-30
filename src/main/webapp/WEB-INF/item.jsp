@@ -2,68 +2,47 @@
 <title>Comentários do Item</title>
 </head>
 <body>
-    <h2 class="text-center text-danger"> Detalhes do trabalho</h2><br/>
-    <h3 class="text-center text-danger">${item.titulo}</h3><br/>
+    <h2 class="text-center text-danger"> ${item.titulo}</h2><br/>
 
-    <div class="row">
-        <div class="col-9"><h3 class="text-center text-danger">${item.titulo}</h3><br/></div>
-        <div class="col-4"><h4>Descrição</h4><br/>${item.descricao}<br/></div>
-        <div class="col-6">
-            <h4>${item.usuario.nome}</h4><br/>
-            Data de criação : ${item.getStringDataCriacao()}<br/> 
-            Data de atualização:${item.getStringDataAtu()}<br/>
+
+ <div class="container">  
+     
+     <div class="row border border-bg-info p-3 mb-2 bg-info text-white rounded">
+         
+        
+        <div class="col-9"><h4>Descrição</h4><br/>${item.descricao}<br/></div>
+        <div class="col-3">
+            <h4>Autoria de ${item.usuario.nome}</h4><br/>
+            Criação<br/>${item.getStringDataCriacao()}<br/> 
+            Atualização<br/>${item.getStringDataAtu()}<br/>
             ${item.avaliacaofinal}<br/>
         </div>
-    </div>
-    <table class="table table-striped">
-        <thead class="text-center">
-            <tr>
-                <th>Descrição</th>
-                <th>Data de criação</th>
-                <th>Data de atualização</th>
-                <th>Criador</th>                
-            </tr>
-        </thead>
-        <tbody>
-            <tr class="text-center">
-                <td>${item.descricao}</td>
-                <td>${item.getStringDataCriacao()}</td> 
-                <td>${item.getStringDataAtu()}</td>
-                <td>${item.usuario.nome}</td>
-            </tr>
-            <tr>
-                <td colspan="4">Avaliação Final do Item: ${item.avaliacaofinal}</td>
-            </tr>
-        </tbody>
-    </table>
+       </div>
     <c:choose>
         <c:when test="${not empty item.comentarios}">
-            <h4 class="text-center text-success">Comentários feitos no item</h4>
-            <table class="table table-striped">
-                <thead class="text-center">
-                    <tr>
-                        <th>Comentário</th>
-                        <th>Data do Comentário</th>
-                        <th>Usuário que comentou</th>
-                        <th>Avalição Final do Comentário</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <c:forEach var="comentario" items="${item.comentarios}">
-                        <tr class="text-center">
-                            <td>${comentario.comentario}</td>
-                            <td>${comentario.getStringDataCriacao()}</td>
-                            <td>${comentario.usuario.nome}</td>
-                            <td>${comentario.avaliacaofinal}</td>
-                        </tr>
-                    </c:forEach>
-                </tbody>
-            </table>
+            <h4 class="text-center text-success">Comentários</h4>
+
+            <div class="row border border-bg-info p-3 mb-2 bg-info text-white rounded" >
+                <c:forEach var="comentario" items="${item.comentarios}">
+
+                    <div class="col-9 border"><i>Data de Criação : ${comentario.getStringDataCriacao()}</i><br/>${comentario.comentario}</div>
+                    <div class="col-3 border">
+                        <br/>
+                        <h5>${item.usuario.nome}</h5><br/>
+                        <br/> 
+                        Avaliação<br/>
+                        ${item.avaliacaofinal}<br/>
+                    </div>
+
+                </c:forEach>
+            </div>
+
         </c:when>
         <c:otherwise>
             <h2 class="text-center text-success">Não há Comentários para o sistema!</h2>
         </c:otherwise>
     </c:choose>
+ </div>
 
 
 
