@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 
-public class CategoriaDetalheRanking implements Comando {
+public class CategoriaDetalheRankingCommand implements Comando {
 
     @Override
     public void exec(HttpServletRequest request, HttpServletResponse response) {
@@ -26,7 +26,7 @@ public class CategoriaDetalheRanking implements Comando {
             RequestDispatcher despachante = request.getRequestDispatcher("/WEB-INF/categoria.jsp");
             despachante.forward(request, response);
         } catch (ServletException | IOException | SQLException ex) {
-            Logger.getLogger(CategoriaDetalheRanking.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CategoriaDetalheRankingCommand.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
