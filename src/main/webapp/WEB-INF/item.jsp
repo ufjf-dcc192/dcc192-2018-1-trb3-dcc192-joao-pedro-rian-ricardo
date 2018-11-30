@@ -22,7 +22,7 @@
         <c:when test="${not empty item.comentarios}">
             <h4 class="text-center text-success">Comentários</h4>
 
-            <div class="row border border-bg-info p-3 mb-2 bg-info text-white rounded" >
+            <div class="row border p-3 mb-2 bg-light text-blue rounded" >
                 <c:forEach var="comentario" items="${item.comentarios}">
 
                     <div class="col-9 border"><i>Data de Criação : ${comentario.getStringDataCriacao()}</i><br/>${comentario.comentario}</div>

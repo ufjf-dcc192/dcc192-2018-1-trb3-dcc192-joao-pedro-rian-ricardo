@@ -5,40 +5,47 @@
 <body>
     <br/>
     <div class="container-fluid">
-        <h4>Categoria ${categoria.categoria} e seus respectivos trabalhos:</h4><br/>
+        <center><h4>Categoria ${categoria.categoria} e seus respectivos trabalhos</h4></center><br/>
     </div>
+    
     <div class="container-fluid" id="categorias">
-        <table class="table">
-            <thead>
-                <tr class="text-center">
-                    <th>Título do Trabalho</th>
-                    <th>Descrição </th>
-                    <th>Criador</th>
-                    <th>Avaliação Final</th>
-                    <th>Opções</th>
-                </tr>
-            </thead>
-            <tbody>
-
+        <div class="row">
+            <div class="col"></div>
+            <div class="col-7">
                 <c:choose>
                     <c:when test="${not empty categoria.itens}">
+                    <div class="row border border-light  p-3 mb-2 bg-light text-blue  rounded" >
                         <c:forEach var="item" items="${categoria.itens}">
-                            <tr class="text-center">
-                                <td>${item.titulo}</td>
-                                <td>${item.descricao}</td>
-                                <td>${item.usuario.nome}</td>
-                                <td>${item.avaliacaofinal}</td>
-                                <td><a href="item.html?idItem=${item.id}" class="btn btn-primary"><i class="fas fa-info-circle"></i> Ver Detalhes</a></td>
-                            </tr>
-                        </c:forEach>
-                    </c:when>
-                    <c:otherwise>
-                    </c:otherwise>
-                </c:choose>
-            </tbody>
-        </table>
+
+
+
+                            <div class="col-9 border border-white"><h5>${item.titulo}</h5><br/><h6> ${item.descricao}</h6></div>
+                            <div class="col-3 border border-white">
+                                    <h6>Criado por ${item.usuario.nome}
+                                    <br/> 
+                                    Avaliação<br/>
+                                    ${item.avaliacaofinal}</h6><br/>
+                                <a href="item.html?idItem=${item.id}" class="btn btn-primary"><i class="fas fa-info-circle"></i> Ver Detalhes</a>
+                                <br/>
+                            </div>
+
+
+                        </div>
+                        <br/>
+                  </c:forEach>
+                </c:when>
+                <c:otherwise>
+                </c:otherwise>
+            </c:choose>
+           
+   </div>
+            <div class="col"> 
+
+                <br/>
+                <br/>
+            </div>
+        </div>
     </div>
-    <br/>
-    <br/>
-    <br/>
+    <br/><br/>
+    <br/><br/>
     <%@include file="jspf/rodape.jspf" %>
