@@ -11,8 +11,8 @@
     <table class="table table-striped">
         <thead>
             <tr class="text-center">
-                <th>ComentÃ¡rios</th>
-                <th colspan="2">OpÃ§Ãµes</th>
+                <th>Comentários</th>
+                <th colspan="2">Opções</th>
             </tr>
         </thead>
         <tbody>

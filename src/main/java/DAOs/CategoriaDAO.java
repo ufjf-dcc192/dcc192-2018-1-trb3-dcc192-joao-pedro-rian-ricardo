@@ -6,11 +6,13 @@
 package DAOs;
 
 import Models.Categoria;
+import Models.Item;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -83,14 +85,16 @@ public class CategoriaDAO {
         return categoria;
     }
 
-    public List<Categoria> getAllCategoriaAndItens() throws SQLException {
+        public List<Categoria> getAllCategoriaAndItens() throws SQLException {
         List<Categoria> categorias = new ArrayList<>();
         try (PreparedStatement comando = conexao.prepareStatement(SQL_ALL_CATEGORIA)) {
             ResultSet resultado = comando.executeQuery();
             if (resultado.next()) {
                 do {
+                    List<Item> itens = ItemDAO.getInstance().getItensByCategoria(resultado.getInt("id_categoria"));
+                    Collections.sort(itens);
                     categorias.add(this.getCategoriaById(resultado.getInt("id_categoria"))
-                            .setItens(ItemDAO.getInstance().getItensByCategoria(resultado.getInt("id_categoria"))));
+                            .setItens(itens));
                 } while (resultado.next());
             }
         }

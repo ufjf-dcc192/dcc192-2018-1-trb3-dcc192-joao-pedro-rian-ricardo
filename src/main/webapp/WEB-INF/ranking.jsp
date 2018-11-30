@@ -52,6 +52,7 @@
                 <th>Data de criação</th>
                 <th>Data de atualização</th>
                 <th>Criador</th>
+                <th>Avaliação Final</th>
             </thead>
         <tbody>
             <c:forEach var="item" items="${itens}">
@@ -61,6 +62,7 @@
                     <td>${item.getStringDataCriacao()}</td> 
                     <td>${item.getStringDataAtu()}</td>
                     <td>${item.usuario.nome}</td>
+                    <td>${item.avaliacaofinal}</td>
                 </tr>
             </c:forEach>
         </tbody>

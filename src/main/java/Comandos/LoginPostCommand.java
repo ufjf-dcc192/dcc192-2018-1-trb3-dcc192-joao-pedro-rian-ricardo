@@ -1,5 +1,6 @@
 package Comandos;
 
+import DAOs.CategoriaDAO;
 import DAOs.UsuarioDAO;
 import Models.Usuario;
 import java.io.IOException;

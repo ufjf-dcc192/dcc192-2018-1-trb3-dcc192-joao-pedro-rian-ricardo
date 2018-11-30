@@ -7,7 +7,7 @@ public class AvaliacaoComentario {
     private Integer positiva;
     private Integer negativa;
     private Usuario usuario;
-    private Comentario comentario;
+    private transient Comentario comentario;
 
     public AvaliacaoComentario(Integer positiva, Integer negativa, Usuario usuario, Comentario comentario) {
         this.positiva = positiva;

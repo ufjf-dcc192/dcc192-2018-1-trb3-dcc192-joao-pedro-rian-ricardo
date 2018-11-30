@@ -5,7 +5,7 @@ public class AvaliacaoItem {
     private Integer positiva;
     private Integer negativa;
     private Usuario usuario;
-    private Item item; 
+    private transient Item item; 
 
     public AvaliacaoItem() {
     }
