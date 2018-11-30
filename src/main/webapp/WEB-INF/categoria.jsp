@@ -17,8 +17,6 @@
                     <div class="row border border-light  p-3 mb-2 bg-light text-blue  rounded" >
                         <c:forEach var="item" items="${categoria.itens}">
 
-
-
                             <div class="col-9 border border-white"><h5>${item.titulo}</h5><br/><h6> ${item.descricao}</h6></div>
                             <div class="col-3 border border-white">
                                     <h6>Criado por ${item.usuario.nome}

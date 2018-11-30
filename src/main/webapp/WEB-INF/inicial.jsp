@@ -24,9 +24,9 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col"></div>
-            <div class="col-6">
+            <div class="col-7">
                 <div class="container-fluid">
-                    <center><h5>Escolha uma categoria para acessar os trabalhos cadastrados</h5></center><br/>
+                    <center><h5>Escolha uma opção para acessar o ranking de trabalhos por categoria</h5></center><br/>
                 </div>
                 <div class="container-fluid" id="categorias">
                     <div class="col"></div>
