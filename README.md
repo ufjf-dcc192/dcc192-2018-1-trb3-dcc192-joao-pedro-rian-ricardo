@@ -6,4 +6,4 @@
 ### Pedro Fernandes Freitas - Matrícula: 201576039 - E-mail: soufreitas.pedro@gmail.com
 ### Rian Alves - Matrícula: 201676040 - E-mail: rianalves2009.ra@gmail.com 
 
-## Link Heroku: https://sistema-curadoria.herokuapp.com
+## Link Heroku: https://mostra-de-trabalhos.herokuapp.com/
