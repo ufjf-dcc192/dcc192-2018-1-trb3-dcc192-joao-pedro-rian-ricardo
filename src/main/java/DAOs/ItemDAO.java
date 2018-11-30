@@ -292,7 +292,7 @@ public class ItemDAO {
                 + "FROM ITEM\n"
                 + "    LEFT JOIN AVALIACAO_ITEM AI ON (ITEM.ID = AI.ID_ITEM)\n"
                 + "group by 1\n"
-                + "order by ?;";
+                + "order by ? DESC;";
         List<Item> itens = new ArrayList<>();
         try (PreparedStatement comando = conexao.prepareStatement(sql)) {
             comando.setInt(1, ordenacao);
@@ -300,6 +300,7 @@ public class ItemDAO {
             if (resultado.next()) {
                 do {
                     Item item = this.getItemById(resultado.getInt(1));
+                    item.setAvaliacaofinal(resultado.getInt("avaliacaofinal"));
                     itens.add(item);
                 } while (resultado.next());
             }
@@ -340,9 +341,9 @@ public class ItemDAO {
 
     public Item getItemDetalhes(Integer idITem) {
         String sql = "SELECT ITEM.ID,\n"
-                + "       SUM(AI.POSITIVA) AS TOTALPOSITIVA,\n"
-                + "       SUM(AI.NEGATIVA) AS TOTALNEGATIVA,\n"
-                + "       SUM(AI.POSITIVA - AI.NEGATIVA) AS AVALIACAOFINAL\n"
+                + "       COALESCE(SUM(AI.POSITIVA),0) AS TOTALPOSITIVA,\n"
+                + "       COALESCE(SUM(AI.NEGATIVA),0) AS TOTALNEGATIVA,\n"
+                + "       COALESCE(SUM(AI.POSITIVA - AI.NEGATIVA),0) AS AVALIACAOFINAL\n"
                 + "FROM ITEM\n"
                 + "     LEFT JOIN AVALIACAO_ITEM AI ON (ITEM.ID = AI.ID_ITEM)\n"
                 + "where item.id=?\n"
@@ -449,7 +450,7 @@ public class ItemDAO {
             ResultSet resultado = comando.executeQuery();
             if (resultado.next()) {
                 do {
-                    itens.add(ItemDAO.getInstance().getItemById(resultado.getInt("id_item")));
+                    itens.add(ItemDAO.getInstance().getItemDetalhes(resultado.getInt("id_item")));
                 } while (resultado.next());
             }
         }

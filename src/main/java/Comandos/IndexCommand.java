@@ -25,9 +25,7 @@ public class IndexCommand implements Comando {
         try {
             if (idUsuario != null) {
                 request.setAttribute("usuario", usuario);
-                Gson gson = new Gson();
-                String categorias = gson.toJson(CategoriaDAO.getInstance().getAllCategoriaAndItens());
-                request.setAttribute("categorias", categorias);
+                request.setAttribute("categorias", CategoriaDAO.getInstance().getAllCategoriaAndItens());
                 RequestDispatcher despachante = request.getRequestDispatcher("/WEB-INF/inicial.jsp");
                 despachante.forward(request, response);
             } else {
