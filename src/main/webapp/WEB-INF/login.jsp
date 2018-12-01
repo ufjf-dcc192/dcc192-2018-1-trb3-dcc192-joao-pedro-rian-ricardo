@@ -10,14 +10,17 @@
     <body>
         
         <div class="row">
-            <div class="col"></div>
-            <div class="col"></div>
+           
+             <div class="col"></div>
+            
             <div class="col"><br/>
                 <div class="box-parent-login">
                     <div class="well bg-white box-login">
 
 
-                        <img src="icones/login.png" class="rounded mx-auto d-block" width="500" height="166" alt="Imagem">
+                        <img src="icones/dcc.png" class="rounded mx-auto d-block" width="250" height="166" alt="Imagem">
+                        <br/>
+                        <center><h4>Mostra de Trabalhos</h4></center>
                         <br/>
                         <form method="post">
                             <fieldset>
@@ -52,7 +55,7 @@
                 </div>
             </div>
             <div class="col"></div>
-            <div class="col"></div>
+             
         </div>
 
         <%@include file="/WEB-INF/jspf/rodape.jspf" %>

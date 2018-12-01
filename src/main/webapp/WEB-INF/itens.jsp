@@ -29,7 +29,7 @@
                         <div class="col-9 border border-white"><h5>${item.titulo}</h5><br/><h6> ${item.descricao}</h6></div>
                         <div class="col-3 border border-white">
                             <div class="container-fluid">
-                                <h6>Criado por ${item.usuario.nome}</h6>
+                                <h6>Criado por ${item.usuario.nome} </h6>
                                 <a href="item.html?idItem=${item.id}" class="btn btn-primary btn-block"><i class="fas fa-info-circle"></i> Ver Detalhes</a>
                             </div>
                             <div class="container-fluid">
