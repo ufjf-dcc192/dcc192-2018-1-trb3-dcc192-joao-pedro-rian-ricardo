@@ -31,9 +31,6 @@
                                     <label for="userPassword">Senha</label>
                                     <input class="form-control ls-login-bg-password input-lg" id="userPassword" type="password" aria-label="Senha" placeholder="Senha" name="senha">
                                 </div>
-
-                                <center><a href="">Esqueci minha senha</a></center><br/>
-
                                 <input type="submit" value="Entrar" class="btn btn-primary btn-lg btn-block" name="acessar" >
 
                                 <center>Não possui cadastro? </center>

@@ -24,7 +24,7 @@
                     <a class="nav-link" href="meusComentarios.html">Meus Comentários</a>
                 </li>
 
-                <li class="nav-item dropdown">
+                <!--<li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Relatórios
                     </a>
@@ -39,7 +39,7 @@
                 <li class="nav-item">
                     <a class="nav-link" href="#">Sobre</a>
                 </li>
-
+                -->
                 <li class="nav-item">
                     <a class="nav-link" href="logout.html">Sair</a>
                 </li>

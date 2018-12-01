@@ -16,7 +16,7 @@
                 <h4>Autoria de ${item.usuario.nome}</h4><br/>
                 Criação<br/>${item.getStringDataCriacao()}<br/> 
                 Atualização<br/>${item.getStringDataAtu()}<br/>
-                ${item.avaliacaofinal}<br/>
+                Avaliação Final: ${item.avaliacaofinal}<br/>
             </div>
         </div>
         <c:choose>
